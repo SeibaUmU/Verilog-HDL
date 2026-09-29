@@ -1,0 +1,51 @@
+module bt4(
+	input CLOCK_50,
+	input [1:0] SW,
+	output [6:0] HEX7, HEX6, HEX5, HEX4, HEX3, HEX2, HEX1, HEX0,
+);
+	parameter L   = 7'b1000111;
+   parameter O   = 7'b1000000;
+   parameter V   = 7'b1000001; 
+   parameter E   = 7'b0000110;
+   parameter OFF = 7'b1111111; // Tắt tất cả các đoạn
+   reg current_state, next_state;
+	reg clock_2hz = 1'b0;
+	integer q;
+	
+	wire rs = SW[1];
+	
+	always @(posedge CLOCK_50)
+	begin
+		q=q+1
+		if (q=50000000)
+		begin
+			clock_2hz = ~clock_2hz;
+			q=0;
+		end
+	end
+	
+	always @(posedge clock_2hz or negedge rs)
+	begin
+		if(!rs) current_state <= s0;
+		else current_state <= next_state;
+	end
+	
+	always @(*)
+	begin
+		case(current_state)
+			s0: next_state = s1;
+			s1: next_state = s0;
+			default next_state = s0;
+		endcase
+	end
+	
+	always @(*)
+	begin
+		case(current_state)
+			s0: HEX7 = OFF, HEX6 = OFF, HEX5 = OFF, HEX4 = OFF, HEX3 = OFF, HEX2 = OFF, HEX1 = OFF, HEX0 = OFF;
+			S1: HEX7 = L, HEX6 = O, HEX5 = V, HEX4 = E, HEX3 = OFF, HEX2 = OFF, HEX1 = OFF, HEX0 = OFF;
+		endcase
+	end
+endmodule
+
+

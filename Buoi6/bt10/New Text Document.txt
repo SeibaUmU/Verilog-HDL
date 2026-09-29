@@ -1,0 +1,83 @@
+module bcd_counter(CK, RS, S, bcd2, bcd1);
+    input       CK;
+    input       RS;
+    input       S;
+    output reg [3:0] bcd2;
+    output reg [3:0] bcd1;
+
+    initial begin          // mặc định khi cấp nguồn 00
+        bcd2 = 4'd0;
+        bcd1 = 4'd0;
+    end
+
+    always @(negedge CK) begin
+        if (RS == 1'b0) begin          // khi RS=0 tc thấp tùy vào S sẽ cho default tương ứng  
+            if (S == 1'b1) begin       // S=1 thì 00 
+                bcd2 <= 4'd0;
+                bcd1 <= 4'd0;
+            end
+            else begin                 // S=0 thì 99 
+                bcd2 <= 4'd9;
+                bcd1 <= 4'd9;
+            end
+        end
+        else if (S == 1'b1) begin      // đếm lên 00→99
+            if (bcd1 == 4'd9) begin
+                bcd1 <= 4'd0;
+                if (bcd2 == 4'd9)
+                    bcd2 <= 4'd0;
+                else
+                    bcd2 <= bcd2 + 1;
+            end
+            else
+                bcd1 <= bcd1 + 1;
+        end
+        else begin                     // đếm xuống 99→00
+            if (bcd1 == 4'd0) begin
+                bcd1 <= 4'd9;
+                if (bcd2 == 4'd0)
+                    bcd2 <= 4'd9;
+                else
+                    bcd2 <= bcd2 - 1;
+            end
+            else
+                bcd1 <= bcd1 - 1;
+        end
+    end
+endmodule
+
+module seg_7doan(BCD, SEG);
+    input      [3:0] BCD;
+    output reg [6:0] SEG;
+    always @(*) begin
+        case(BCD)
+            4'd0: SEG = 7'b1000000;
+            4'd1: SEG = 7'b1111001;
+            4'd2: SEG = 7'b0100100;
+            4'd3: SEG = 7'b0110000;
+            4'd4: SEG = 7'b0011001;
+            4'd5: SEG = 7'b0010010;
+            4'd6: SEG = 7'b0000010;
+            4'd7: SEG = 7'b1111000;
+            4'd8: SEG = 7'b0000000;
+            4'd9: SEG = 7'b0010000;
+            default: SEG = 7'b1111111;
+        endcase
+    end
+endmodule
+
+module bt10(KEY, SW, HEX2, HEX1);
+    input  [1:1] KEY;   // KEY[1] = CK
+    input  [2:1] SW;    // SW[2]=RS, SW[1]=S
+    output [6:0] HEX2;  // hàng chục
+    output [6:0] HEX1;  // hàng đơn vị
+
+    wire CK = KEY[1];
+    wire RS = SW[2];
+    wire S  = SW[1];
+    wire [3:0] bcd2, bcd1;
+
+    bcd_counter u1(.CK(CK), .RS(RS), .S(S), .bcd2(bcd2), .bcd1(bcd1));
+    seg_7doan   u2(.BCD(bcd2), .SEG(HEX2));
+    seg_7doan   u3(.BCD(bcd1), .SEG(HEX1));
+endmodule

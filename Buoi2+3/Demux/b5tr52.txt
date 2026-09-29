@@ -1,0 +1,77 @@
+// ==========================================
+// Module chính: Demux 1-to-16 (Ghép từ 2 bộ Demux 1-8)
+// Enable tổng: Tích cực mức THẤP
+// ==========================================
+module demux1_16_board(LEDR, SW);
+
+    // Khai báo theo phong cách giáo trình
+    input [5:0] SW;         // SW[0]: in | SW[4:1]: select | SW[5]: Enable tổng (mức THẤP)
+    output [15:0] LEDR;     // 16 ngõ ra
+
+    // Khai báo đường dây Enable cho 2 bộ 1-to-8
+    wire en_lower_n; 
+    wire en_upper_n;
+
+    // -----------------------------------------------------------
+    // DATAFLOW MODELING: Tạo tín hiệu phân luồng Enable
+    // Mạch con yêu cầu Enable mức THẤP (bằng 0 mới chạy).
+    // - en_lower_n = 0 khi SW[5] = 0 (Cho phép) VÀ SW[4] = 0 (Nửa dưới)
+    // - en_upper_n = 0 khi SW[5] = 0 (Cho phép) VÀ SW[4] = 1 (Nửa trên)
+    // -----------------------------------------------------------
+    assign en_lower_n = SW[5] | SW[4];  // Phép OR: Chỉ bằng 0 khi cả hai cùng bằng 0
+    assign en_upper_n = SW[5] | ~SW[4]; // Phép OR: Chỉ bằng 0 khi SW[5]=0 và SW[4]=1
+
+    // -----------------------------------------------------------
+    // GỌI MODULE CON: Khởi tạo 2 bộ Demux 1-to-8
+    // -----------------------------------------------------------
+    
+    // Nửa dưới (Ngõ ra từ 0 đến 7)
+    demux1_8_dataflow demux_low (
+        .y(LEDR[7:0]),   
+        .in(SW[0]),      
+        .sel(SW[3:1]),   // 3 bit chọn thấp
+        .en_n(en_lower_n) 
+    );
+
+    // Nửa trên (Ngõ ra từ 8 đến 15)
+    demux1_8_dataflow demux_high (
+        .y(LEDR[15:8]),  
+        .in(SW[0]),      
+        .sel(SW[3:1]),   // 3 bit chọn thấp
+        .en_n(en_upper_n) 
+    );
+
+endmodule
+
+
+// ==========================================
+// Module con: Demux 1-to-8 (MÔ HÌNH LUỒNG DỮ LIỆU)
+// Enable: Tích cực mức THẤP (en_n)
+// ==========================================
+module demux1_8_dataflow(y, in, sel, en_n);
+    
+    // Khai báo in/out
+    input in;           // 1 bit dữ liệu đầu vào
+    input [2:0] sel;    // 3 bit chân chọn (Select)
+    input en_n;         // Enable tích cực mức THẤP
+    
+    // Ngõ ra kiểu wire (mặc định) để dùng với lệnh assign
+    output [7:0] y; 
+
+    // -----------------------------------------------------------
+    // MÔ HÌNH LUỒNG DỮ LIỆU (DATAFLOW)
+    // Sử dụng toán tử điều kiện (?:) để mô tả luồng dữ liệu cho từng bit.
+    // Điều kiện: Mạch được phép chạy (en_n == 0) VÀ tổ hợp Select trỏ đúng vị trí.
+    // Nếu ĐÚNG: Truyền dữ liệu 'in' ra ngõ đó.
+    // Nếu SAI: Ép ngõ đó về mức '0'.
+    // -----------------------------------------------------------
+    assign y[0] = (en_n == 1'b0 && sel == 3'b000) ? in : 1'b0;
+    assign y[1] = (en_n == 1'b0 && sel == 3'b001) ? in : 1'b0;
+    assign y[2] = (en_n == 1'b0 && sel == 3'b010) ? in : 1'b0;
+    assign y[3] = (en_n == 1'b0 && sel == 3'b011) ? in : 1'b0;
+    assign y[4] = (en_n == 1'b0 && sel == 3'b100) ? in : 1'b0;
+    assign y[5] = (en_n == 1'b0 && sel == 3'b101) ? in : 1'b0;
+    assign y[6] = (en_n == 1'b0 && sel == 3'b110) ? in : 1'b0;
+    assign y[7] = (en_n == 1'b0 && sel == 3'b111) ? in : 1'b0;
+
+endmodule

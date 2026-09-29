@@ -1,0 +1,21 @@
+module LCD_VD1(CLOCK_50,LCD_ON,LCD_BLON,LCD_EN,LCD_RS,LCD_RW,LCD_DATA);
+input CLOCK_50;
+output LCD_ON,LCD_BLON,LCD_EN,LCD_RS,LCD_RW;
+inout [7:0]LCD_DATA;
+reg [8:0]data;
+reg on,blon,en,rw;
+reg [5:0]state;
+reg [2:0]index;
+reg flag;
+reg [19:0]count_lcd;
+reg [19:0]countend;
+reg mode,r_l;
+reg [3:0]times;
+assign LCD_ON = on;      
+//LCD_ON: Điều khiển bật LCD (luôn được bật 1'b1).
+assign LCD_BLON = blon;    // LCD_BLON: Điều khiển đèn nền LCD (1'b0, tức là tắt).
+assign LCD_EN = en;       
+//  LCD_EN: Tín hiệu bật LCD (Enable)
+assign LCD_RS = data[8];  // LCD_RS=0: Chọn thanh ghi lệnh IR; LCD_RS=1:Chọn thanh ghi dữ liệu DR
+assign LCD_RW = rw;       //LCD_RW=1: Chế độ đọc; LCD_RW=0:Chế độ ghi
+assign LCD_DATA = (!rw)? data[7:0] : 8'hzz; 

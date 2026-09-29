@@ -1,0 +1,48 @@
+module counter(CLK, RS, Q);
+    input CLK;
+    input RS;
+    output reg [4:0] Q;
+
+    always @(posedge CLK or posedge RS) begin
+        if (RS == 1'b1)
+            Q <= 5'd27;
+        else if (Q == 5'd0)
+            Q <= 5'd27;
+        else
+            Q <= Q - 1;
+    end
+endmodule
+
+module seg_7doan(BCD, SEG);
+    input  [3:0] BCD;
+    output reg [6:0] SEG;
+    always @(*) begin
+        case(BCD)
+            4'd0: SEG = 7'b1000000;
+            4'd1: SEG = 7'b1111001;
+            4'd2: SEG = 7'b0100100;
+            4'd3: SEG = 7'b0110000;
+            4'd4: SEG = 7'b0011001;
+            4'd5: SEG = 7'b0010010;
+            4'd6: SEG = 7'b0000010;
+            4'd7: SEG = 7'b1111000;
+            4'd8: SEG = 7'b0000000;
+            4'd9: SEG = 7'b0010000;
+				
+            default: SEG = 7'b1111111;
+        endcase
+    end
+endmodule
+
+module bt5(KEY, HEX1, HEX0);
+    input  [2:1] KEY;
+    output [6:0] HEX0, HEX1;
+    wire [4:0] Q;
+
+    wire CLK = KEY[1];  //set clk key0
+    wire RS  = KEY[2];		
+
+    counter   u1(.CLK(CLK), .RS(RS), .Q(Q));
+    seg_7doan u2(.BCD(Q / 10), .SEG(HEX1)); //CHUC
+    seg_7doan u3(.BCD(Q % 10), .SEG(HEX0));//DONVI
+endmodule

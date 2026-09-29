@@ -1,0 +1,23 @@
+module decoder4to16(LEDR,SW);
+input [3:0]SW;
+output [16:1]LEDR;
+wire notd;
+assign notd = ~SW[3];
+	decoder3_8 u1(LEDR[8:1],notd,SW[2:0]);
+	decoder3_8 u2(LEDR[16:9],SW[3],SW[2:0]);
+endmodule
+
+//module con 3_8
+module decoder3_8(y,e,x);
+input [2:0]x;
+input e;
+output [7:0]y;
+	assign y[0]=e&~x[2]&~x[1]&~x[0];
+	assign y[1]=e&~x[2]&~x[1]&x[0];
+	assign y[2]=e&~x[2]&x[1]&~x[0];
+	assign y[3]=e&~x[2]&x[1]&x[0];
+	assign y[4]=e&x[2]&~x[1]&~x[0];
+	assign y[5]=e&x[2]&~x[1]&x[0];
+	assign y[6]=e&x[2]&x[1]&~x[0];
+	assign y[7]=e&x[2]&x[1]&x[0];
+endmodule

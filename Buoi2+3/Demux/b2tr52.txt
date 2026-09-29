@@ -1,0 +1,70 @@
+// ==========================================
+// Module chính: Demux 1-to-8 (Ghép từ 2 bộ Demux 1-4)
+// ==========================================
+module demux1_8_board(LEDR, SW);
+
+    // Khai báo theo phong cách giáo trình
+    input [3:0] SW;         // SW[0]: Dữ liệu in | SW[3:1]: Chân chọn (Select)
+    output [7:0] LEDR;      // 8 ngõ ra
+
+    // Đường dây tạo tín hiệu Enable cho nửa dưới
+    wire not_sw3;
+
+    // Dùng cổng NOT để đảo bit SW[3]
+    // - Khi SW[3] = 0 -> not_sw3 = 1 -> Bật nửa dưới (0-3)
+    // - Khi SW[3] = 1 -> SW[3]     = 1 -> Bật nửa trên (4-7)
+    not u_not (not_sw3, SW[3]); 
+
+    // -----------------------------------------------------------
+    // GỌI MODULE CON: Khởi tạo 2 bộ Demux 1-to-4
+    // -----------------------------------------------------------
+    
+    // Nửa dưới (Ngõ ra từ 0 đến 3)
+    demux1_4_structural demux0 (
+        .y(LEDR[3:0]), 
+        .in(SW[0]),      // Dữ liệu ngõ vào dùng chung
+        .sel(SW[2:1]),   // 2 bit chọn thấp dùng chung
+        .en(not_sw3)     // Enable nửa dưới
+    );
+
+    // Nửa trên (Ngõ ra từ 4 đến 7)
+    demux1_4_structural demux1 (
+        .y(LEDR[7:4]), 
+        .in(SW[0]),      // Dữ liệu ngõ vào dùng chung
+        .sel(SW[2:1]),   // 2 bit chọn thấp dùng chung
+        .en(SW[3])       // Enable nửa trên trực tiếp bằng SW[3]
+    );
+
+endmodule
+
+
+// ==========================================
+// Module con: Demux 1-to-4 (MÔ HÌNH CẤU TRÚC)
+// Enable: Tích cực mức CAO
+// ==========================================
+module demux1_4_structural(y, in, sel, en);
+    
+    // Khai báo in/out
+    input in;           // 1 bit dữ liệu đầu vào
+    input [1:0] sel;    // 2 bit chân chọn
+    input en;           // Enable tích cực mức CAO
+    output [3:0] y;     // Ngõ ra kiểu wire mặc định
+
+    // Các đường dây chứa tín hiệu đảo của chân select
+    wire n_sel0, n_sel1;
+
+    // Tạo tín hiệu đảo
+    not u0 (n_sel0, sel[0]);
+    not u1 (n_sel1, sel[1]);
+
+    // -----------------------------------------------------------
+    // Sử dụng cổng AND 4 ngõ vào: and (ngõ_ra, vào_1, vào_2, vào_3, vào_4)
+    // Ngõ ra chỉ bằng 1 khi CẢ 4 ngõ vào đều bằng 1
+    // (Tức là: Mạch chạy VÀ có dữ liệu VÀ đúng địa chỉ)
+    // -----------------------------------------------------------
+    and a0 (y[0], en, in, n_sel1, n_sel0); // y[0] = en & in & ~sel[1] & ~sel[0]
+    and a1 (y[1], en, in, n_sel1, sel[0]); // y[1] = en & in & ~sel[1] &  sel[0]
+    and a2 (y[2], en, in, sel[1], n_sel0); // y[2] = en & in &  sel[1] & ~sel[0]
+    and a3 (y[3], en, in, sel[1], sel[0]); // y[3] = en & in &  sel[1] &  sel[0]
+
+endmodule

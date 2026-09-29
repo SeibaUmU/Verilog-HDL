@@ -1,0 +1,149 @@
+------------------------------------------------------------
+TimeQuest Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow 1200mV 85C Model Setup 'CLOCK_50'
+Slack : -4.331
+TNS   : -426.181
+
+Type  : Slow 1200mV 85C Model Setup 'clock_ledr'
+Slack : -1.981
+TNS   : -37.971
+
+Type  : Slow 1200mV 85C Model Setup 'clock_ledg'
+Slack : -0.246
+TNS   : -1.499
+
+Type  : Slow 1200mV 85C Model Setup 'clock_hex'
+Slack : 0.210
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'CLOCK_50'
+Slack : -0.264
+TNS   : -0.481
+
+Type  : Slow 1200mV 85C Model Hold 'clock_ledg'
+Slack : 0.429
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'clock_ledr'
+Slack : 0.436
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'clock_hex'
+Slack : 0.445
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'CLOCK_50'
+Slack : -3.000
+TNS   : -200.890
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'clock_ledr'
+Slack : -1.285
+TNS   : -71.960
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'clock_ledg'
+Slack : -1.285
+TNS   : -28.270
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'clock_hex'
+Slack : -1.285
+TNS   : -1.285
+
+Type  : Slow 1200mV 0C Model Setup 'CLOCK_50'
+Slack : -3.894
+TNS   : -371.897
+
+Type  : Slow 1200mV 0C Model Setup 'clock_ledr'
+Slack : -1.747
+TNS   : -30.955
+
+Type  : Slow 1200mV 0C Model Setup 'clock_ledg'
+Slack : -0.117
+TNS   : -0.633
+
+Type  : Slow 1200mV 0C Model Setup 'clock_hex'
+Slack : 0.297
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'CLOCK_50'
+Slack : -0.234
+TNS   : -0.409
+
+Type  : Slow 1200mV 0C Model Hold 'clock_ledg'
+Slack : 0.387
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'clock_hex'
+Slack : 0.398
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'clock_ledr'
+Slack : 0.401
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'CLOCK_50'
+Slack : -3.000
+TNS   : -200.890
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'clock_ledr'
+Slack : -1.285
+TNS   : -71.960
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'clock_ledg'
+Slack : -1.285
+TNS   : -28.270
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'clock_hex'
+Slack : -1.285
+TNS   : -1.285
+
+Type  : Fast 1200mV 0C Model Setup 'CLOCK_50'
+Slack : -1.723
+TNS   : -135.798
+
+Type  : Fast 1200mV 0C Model Setup 'clock_ledr'
+Slack : -0.435
+TNS   : -5.501
+
+Type  : Fast 1200mV 0C Model Setup 'clock_ledg'
+Slack : 0.391
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'clock_hex'
+Slack : 0.626
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'CLOCK_50'
+Slack : -0.274
+TNS   : -0.643
+
+Type  : Fast 1200mV 0C Model Hold 'clock_ledr'
+Slack : 0.191
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'clock_ledg'
+Slack : 0.192
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'clock_hex'
+Slack : 0.208
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'CLOCK_50'
+Slack : -3.000
+TNS   : -201.615
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'clock_ledr'
+Slack : -1.000
+TNS   : -56.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'clock_ledg'
+Slack : -1.000
+TNS   : -22.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'clock_hex'
+Slack : -1.000
+TNS   : -1.000
+
+------------------------------------------------------------

@@ -1,0 +1,88 @@
+// ==========================================
+// Module chính (4-to-16): Mô hình hành vi điều khiển Enable
+// Ngõ vào Enable: Tích cực mức CAO
+// Ngõ ra: Tích cực mức CAO
+// ==========================================
+module decoder4_16_board(LEDR, SW);
+
+    // Khai báo theo phong cách giáo trình
+    input [4:0] SW;         // SW[3:0]: Dữ liệu | SW[4]: Enable (Tích cực CAO)
+    output [15:0] LEDR;     // 16 ngõ ra (Tích cực CAO)
+
+    // Khai báo kiểu 'reg' cho các tín hiệu Enable nội bộ phân luồng
+    reg en0; 
+    reg en1; 
+
+    // -----------------------------------------------------------
+    // MÔ HÌNH HÀNH VI: Phân luồng tín hiệu Enable
+    // -----------------------------------------------------------
+    always @(*) begin
+        // Kiểm tra chân Enable tổng (SW[4] tích cực mức CAO)
+        if (SW[4] == 1'b1) begin
+            // Mạch được phép chạy, xét bit SW[3] để chọn nửa trên/dưới
+            if (SW[3] == 1'b0) begin
+                en0 = 1'b1; // Bật bộ 3-to-8 nửa dưới (0-7)
+                en1 = 1'b0; // Tắt bộ nửa trên
+            end 
+            else begin
+                en0 = 1'b0; // Tắt bộ nửa dưới
+                en1 = 1'b1; // Bật bộ 3-to-8 nửa trên (8-15)
+            end
+        end 
+        else begin
+            // Nếu SW[4] = 0 (Mạch tắt), rút Enable của cả hai bộ về 0
+            en0 = 1'b0;
+            en1 = 1'b0;
+        end
+    end
+
+    // -----------------------------------------------------------
+    // GỌI MODULE CON: Khởi tạo 2 bộ Decoder 3-to-8
+    // -----------------------------------------------------------
+    
+    // Nửa dưới (Ngõ ra từ 0 đến 7)
+    decoder3_8_dataflow dec0 (
+        .y(LEDR[7:0]), 
+        .d(SW[2:0]), 
+        .en(en0)
+    );
+
+    // Nửa trên (Ngõ ra từ 8 đến 15)
+    decoder3_8_dataflow dec1 (
+        .y(LEDR[15:8]), 
+        .d(SW[2:0]), 
+        .en(en1)
+    );
+
+endmodule
+
+
+// ==========================================
+// Module con (3-to-8): MÔ HÌNH LUỒNG DỮ LIỆU (DATAFLOW)
+// Ngõ vào Enable: Tích cực mức CAO
+// Ngõ ra: Tích cực mức CAO
+// ==========================================
+module decoder3_8_dataflow(y, d, en);
+    
+    // Khai báo in/out
+    input [2:0] d;      // 3 bit dữ liệu
+    input en;           // Enable tích cực mức CAO
+    
+    // Ngõ ra kiểu wire (mặc định) để dùng với lệnh assign
+    output [7:0] y; 
+
+    // -----------------------------------------------------------
+    // Lệnh assign mô tả dòng chảy dữ liệu liên tục
+    // Nếu en = 0, toàn bộ ngõ ra bằng 0.
+    // Nếu en = 1, kiểm tra giá trị của d để xuất ra bit 1 tương ứng.
+    // -----------------------------------------------------------
+    assign y[0] = en & ~d[2] & ~d[1] & ~d[0];
+    assign y[1] = en & ~d[2] & ~d[1] &  d[0];
+    assign y[2] = en & ~d[2] &  d[1] & ~d[0];
+    assign y[3] = en & ~d[2] &  d[1] &  d[0];
+    assign y[4] = en &  d[2] & ~d[1] & ~d[0];
+    assign y[5] = en &  d[2] & ~d[1] &  d[0];
+    assign y[6] = en &  d[2] &  d[1] & ~d[0];
+    assign y[7] = en &  d[2] &  d[1] &  d[0];
+
+endmodule

@@ -1,0 +1,84 @@
+module bai6(KEY, SW, HEX0, HEX1, HEX2, HEX3);
+    input  [2:1] KEY;
+    input  [2:1] SW;
+    output [6:0] HEX0, HEX1, HEX2, HEX3;
+    
+    wire [3:0] b1, b2, b3, b4;
+    wire muon_giay; 
+
+    wire CLK = KEY[2]; 
+    wire RS  = SW[2];
+
+    counter_down giay (
+        .en(1'b1), 
+        .ck(CLK), 
+        .rs(RS), 
+        .bcd1(b1), 
+        .bcd2(b2), 
+        .out_muon(muon_giay)
+    );
+
+    counter_down phut (
+        .en(muon_giay), 
+        .ck(CLK), 
+        .rs(RS), 
+        .bcd1(b3), 
+        .bcd2(b4), 
+        .out_muon()
+    );
+
+    led_7doan led_giay_dv (b1, HEX0);
+    led_7doan led_giay_ch (b2, HEX1);
+    led_7doan led_phut_dv (b3, HEX2);
+    led_7doan led_phut_ch (b4, HEX3);
+
+endmodule
+
+module counter_down (en, ck, rs, bcd1, bcd2, out_muon);
+    input en, ck, rs;
+    output reg [3:0] bcd1, bcd2;
+    output out_muon; 
+	 
+    assign out_muon = (en && bcd1 == 4'd0 && bcd2 == 4'd0);
+
+    always @(posedge ck) begin
+        if (rs) begin
+            bcd1 <= 4'd9;
+            bcd2 <= 4'd5;
+        end 
+        else if (en) begin
+            if (bcd1 > 4'd0) begin
+                bcd1 <= bcd1 - 1'b1;
+            end 
+            else begin 
+                bcd1 <= 4'd9;
+                if (bcd2 > 4'd0) begin
+                    bcd2 <= bcd2 - 1'b1;
+                end 
+                else begin 
+                    bcd2 <= 4'd5;
+                end
+            end
+        end
+    end
+endmodule
+
+module led_7doan(BCD, LED);
+    input  [3:0] BCD;
+    output reg [6:0] LED;
+    always @(*) begin
+        case(BCD)
+            4'd0: LED = 7'b1000000;
+            4'd1: LED = 7'b1111001;
+            4'd2: LED = 7'b0100100;
+            4'd3: LED = 7'b0110000;
+            4'd4: LED = 7'b0011001;
+            4'd5: LED = 7'b0010010;
+            4'd6: LED = 7'b0000010;
+            4'd7: LED = 7'b1111000;
+            4'd8: LED = 7'b0000000;
+            4'd9: LED = 7'b0010000;
+            default: LED = 7'b1111111;
+        endcase
+    end
+endmodule

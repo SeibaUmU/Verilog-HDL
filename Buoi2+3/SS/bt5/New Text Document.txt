@@ -1,0 +1,23 @@
+module ss5(LEDR,SW);
+input[11:0]SW;
+output[2:0]LEDR;
+
+wire [5:0] A;
+wire [5:0] B;
+
+assign A = SW[5:0];     
+assign B = SW[11:6];    
+
+always @(*) begin
+    if (A > B) begin
+        LEDR = 3'b001;
+    end
+    else if (A == B) begin
+        LEDR = 3'b010; 
+    end
+    else begin
+        LEDR = 3'b100;
+    end
+end
+
+endmodule

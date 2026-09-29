@@ -1,0 +1,38 @@
+module buoi3(LEDR, SW);
+input [5:1]SW;
+
+output [16:1]LEDR;
+wire note;
+not n(note,SW[4]);
+
+demux1to8(SW[3:1],LEDR[8:1],note,SW[5]);
+
+demux1to8(SW[3:1],LEDR[16:9],SW[4],SW[5]);
+
+endmodule
+
+module demux1to8(x,y,e,d);
+input [3:1]x;
+input e;
+input d;
+output [8:1]y;
+reg [8:1]y;
+always @(*) begin
+y=8'b00000000;
+if(e==1'b1)
+begin
+case (x[3:1])
+3'b000: y[1] = d;
+3'b001: y[2] = d;
+3'b010: y[3] = d;
+3'b011: y[4] = d;
+3'b100: y[5] = d;
+3'b101: y[6] = d;
+3'b110: y[7] = d;
+3'b111: y[8] = d;
+endcase
+end
+else
+y[8:1]=8'b00000000;
+end
+endmodule

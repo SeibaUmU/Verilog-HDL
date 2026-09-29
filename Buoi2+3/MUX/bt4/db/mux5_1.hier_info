@@ -1,0 +1,45 @@
+|mux5_1
+LEDR[0] <= <GND>
+LEDR[1] <= mux2_1:a4.port3
+SW[0] => SW[0].IN2
+SW[1] => SW[1].IN1
+SW[2] => SW[2].IN1
+SW[3] => SW[3].IN1
+SW[4] => SW[4].IN1
+SW[5] => SW[5].IN1
+SW[6] => SW[6].IN1
+SW[7] => SW[7].IN1
+
+
+|mux5_1|mux2_1:a1
+a => u2.IN0
+a => u1.IN0
+b => u1.IN1
+c => u2.IN1
+y <= u3.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|mux5_1|mux2_1:a2
+a => u2.IN0
+a => u1.IN0
+b => u1.IN1
+c => u2.IN1
+y <= u3.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|mux5_1|mux2_1:a3
+a => u2.IN0
+a => u1.IN0
+b => u1.IN1
+c => u2.IN1
+y <= u3.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|mux5_1|mux2_1:a4
+a => u2.IN0
+a => u1.IN0
+b => u1.IN1
+c => u2.IN1
+y <= u3.DB_MAX_OUTPUT_PORT_TYPE
+
+

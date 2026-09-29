@@ -1,0 +1,51 @@
+/*dem 14-00 voi ton=toff=400ms*15=6000ms=6s;
+ta co fchuan =50MHZ tchuan=1s do Tck=400ms => fck=20MHz voi fchuan=2,5*fck 
+trong do fon=foff=fck/2;
+*/
+module bt4(CLK_50, ck_400ms, SW, HEX0, HEX1);
+	input CLK_50;
+	input SW;
+	output reg ck_400ms=1'b0;
+	output reg [6:0] HEX0;
+	output reg [6:0] HEX1;
+	integer q=0;
+	reg [3:0] dem= 4'd14;
+	always @ (posedge CLK_50) begin // canh len ck thi dem xung
+		q<=q+1;
+		if(q==20000000) begin	
+			ck_400ms = ~ck_400ms;
+			q<=0;
+		end
+	end
+	always @(posedge ck_400ms) begin
+		if (SW == 0)// Reset SW=0
+			dem <= 4'd14;
+		else if (dem == 4'd0)
+			dem <= 4'd14;// Tu reset sau khi dem den 0
+		else dem <= dem - 1;
+	end
+
+	always @(dem) begin //hang don vi chia %10
+		case (dem % 10)
+			4'd0: HEX0 = 7'b1000000;  // 0
+			4'd1: HEX0 = 7'b1111001;  // 1
+			4'd2: HEX0 = 7'b0100100;  // 2
+			4'd3: HEX0 = 7'b0110000;  // 3
+			4'd4: HEX0 = 7'b0011001;  // 4
+			4'd5: HEX0 = 7'b0010010;  // 5
+			4'd6: HEX0 = 7'b0000010;  // 6
+			4'd7: HEX0 = 7'b1111000;  // 7
+			4'd8: HEX0 = 7'b0000000;  // 8
+			4'd9: HEX0 = 7'b0010000;  // 9
+			default: HEX0 = 7'b1111111;// de default tat het
+		endcase
+	end
+					 
+		always @(dem) begin // hang chuc chia /10
+			case (dem / 10)
+				4'd0: HEX1 = 7'b1000000;  // 0
+				4'd1: HEX1 = 7'b1111001;  // 1
+				default: HEX1 = 7'b1000000;// 0
+			endcase
+		end
+endmodule

@@ -1,0 +1,48 @@
+// ==========================================
+// Module chính: Mux 5-to-1 (Dùng trực tiếp SW và LEDR)
+// ==========================================
+module mux5_1_board(LEDR, SW);
+    // Khai báo in/out theo phong cách giáo trình
+    input [7:0] SW;        // Cần 8 Switch (5 bit data + 3 bit select)
+    output [0:0] LEDR;     // 1 LED ngõ ra
+
+    // Khai báo các đường dây trung gian nối giữa các Mux
+    wire w_mux1_out; 
+    wire w_mux2_out; 
+    wire w_mux3_out; 
+
+    // Gọi 4 module Mux 2-1 và gán trực tiếp các Switch tương ứng
+    
+    // Tầng 1: Điều khiển bởi s0 (tương ứng SW[5])
+    // m1 nối u (SW[0]) và v (SW[1])
+    mux2_1_1bit m1(.y(w_mux1_out), .i0(SW[0]), .i1(SW[1]), .sel(SW[5]));
+    // m2 nối w (SW[2]) và x (SW[3])
+    mux2_1_1bit m2(.y(w_mux2_out), .i0(SW[2]), .i1(SW[3]), .sel(SW[5]));
+    
+    // Tầng 2: Điều khiển bởi s1 (tương ứng SW[6])
+    mux2_1_1bit m3(.y(w_mux3_out), .i0(w_mux1_out), .i1(w_mux2_out), .sel(SW[6]));
+    
+    // Tầng 3: Điều khiển bởi s2 (tương ứng SW[7])
+    // Mux cuối nhận ngõ ra tầng 2 và y (SW[4]), xuất ra thẳng LEDR[0]
+    mux2_1_1bit m4(.y(LEDR[0]), .i0(w_mux3_out), .i1(SW[4]), .sel(SW[7]));
+
+endmodule
+
+// ==========================================
+// Module con: Mux 2-to-1 1-bit (Mô hình cấu trúc)
+// ==========================================
+module mux2_1_1bit(y, i0, i1, sel);
+    input i0, i1, sel;
+    output y;
+
+    wire not_sel;
+    wire and0_out;
+    wire and1_out;
+
+    // Sử dụng các cổng logic cơ bản
+    not u1(not_sel, sel);
+    and u2(and0_out, i0, not_sel);
+    and u3(and1_out, i1, sel);
+    or  u4(y, and0_out, and1_out);
+
+endmodule

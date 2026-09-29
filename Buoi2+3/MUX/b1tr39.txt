@@ -1,0 +1,43 @@
+// ==========================================
+// Module chính: Mux 2-to-1 dữ liệu 8-bit
+// ==========================================
+module mux2_1_8bit(LEDR, SW);
+    // Khai báo theo phong cách của giáo trình
+    input [16:0] SW;   // 8 bit i0 + 8 bit i1 + 1 bit sel = 17 Switches
+    output [7:0] LEDR; // 8 LEDs hiển thị ngõ ra
+
+    // Gọi các module con (vẫn giữ cách nối dây an toàn .i0, .i1, .sel, .y)
+    // SW[7:0]   : Dữ liệu i0
+    // SW[15:8]  : Dữ liệu i1
+    // SW[16]    : Chân chọn (select)
+    mux2_1_1bit m0(.y(LEDR[0]), .i0(SW[0]), .i1(SW[8]),  .sel(SW[16]));
+    mux2_1_1bit m1(.y(LEDR[1]), .i0(SW[1]), .i1(SW[9]),  .sel(SW[16]));
+    mux2_1_1bit m2(.y(LEDR[2]), .i0(SW[2]), .i1(SW[10]), .sel(SW[16]));
+    mux2_1_1bit m3(.y(LEDR[3]), .i0(SW[3]), .i1(SW[11]), .sel(SW[16]));
+    mux2_1_1bit m4(.y(LEDR[4]), .i0(SW[4]), .i1(SW[12]), .sel(SW[16]));
+    mux2_1_1bit m5(.y(LEDR[5]), .i0(SW[5]), .i1(SW[13]), .sel(SW[16]));
+    mux2_1_1bit m6(.y(LEDR[6]), .i0(SW[6]), .i1(SW[14]), .sel(SW[16]));
+    mux2_1_1bit m7(.y(LEDR[7]), .i0(SW[7]), .i1(SW[15]), .sel(SW[16]));
+
+endmodule
+
+// ==========================================
+// Module con: Mux 2-to-1 1-bit (Mô hình cấu trúc)
+// ==========================================
+module mux2_1_1bit(y, i0, i1, sel);
+    // Khai báo in/out theo phong cách của giáo trình
+    input i0, i1, sel;
+    output y;
+
+    wire not_sel;
+    wire and0_out;
+    wire and1_out;
+
+    // Trong sách dùng Dataflow (assign y = ...), nhưng do yêu cầu ban đầu 
+    // của bạn là dùng mô hình cấu trúc (Structural) nên mình vẫn dùng các cổng logic:
+    not u1(not_sel, sel);
+    and u2(and0_out, i0, not_sel);
+    and u3(and1_out, i1, sel);
+    or  u4(y, and0_out, and1_out);
+
+endmodule

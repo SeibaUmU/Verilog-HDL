@@ -1,0 +1,34 @@
+
+State Machine - |test|state_ledr
+Name state_ledr.11 state_ledr.10 state_ledr.01 state_ledr.00 
+state_ledr.00 0 0 0 0 
+state_ledr.01 0 0 1 1 
+state_ledr.10 0 1 0 1 
+state_ledr.11 1 0 0 1 
+
+State Machine - |test|state_ledg
+Name state_ledg.01100 state_ledg.01011 state_ledg.01010 state_ledg.01001 state_ledg.01000 state_ledg.00111 state_ledg.00110 state_ledg.00101 state_ledg.00100 state_ledg.00011 state_ledg.00010 state_ledg.00001 state_ledg.00000 
+state_ledg.00000 0 0 0 0 0 0 0 0 0 0 0 0 0 
+state_ledg.00001 0 0 0 0 0 0 0 0 0 0 0 1 1 
+state_ledg.00010 0 0 0 0 0 0 0 0 0 0 1 0 1 
+state_ledg.00011 0 0 0 0 0 0 0 0 0 1 0 0 1 
+state_ledg.00100 0 0 0 0 0 0 0 0 1 0 0 0 1 
+state_ledg.00101 0 0 0 0 0 0 0 1 0 0 0 0 1 
+state_ledg.00110 0 0 0 0 0 0 1 0 0 0 0 0 1 
+state_ledg.00111 0 0 0 0 0 1 0 0 0 0 0 0 1 
+state_ledg.01000 0 0 0 0 1 0 0 0 0 0 0 0 1 
+state_ledg.01001 0 0 0 1 0 0 0 0 0 0 0 0 1 
+state_ledg.01010 0 0 1 0 0 0 0 0 0 0 0 0 1 
+state_ledg.01011 0 1 0 0 0 0 0 0 0 0 0 0 1 
+state_ledg.01100 1 0 0 0 0 0 0 0 0 0 0 0 1 
+
+State Machine - |test|state_hex
+Name state_hex.hex_s7 state_hex.hex_s6 state_hex.hex_s5 state_hex.hex_s4 state_hex.hex_s3 state_hex.hex_s2 state_hex.hex_s1 state_hex.hex_s0 
+state_hex.hex_s0 0 0 0 0 0 0 0 0 
+state_hex.hex_s1 0 0 0 0 0 0 1 1 
+state_hex.hex_s2 0 0 0 0 0 1 0 1 
+state_hex.hex_s3 0 0 0 0 1 0 0 1 
+state_hex.hex_s4 0 0 0 1 0 0 0 1 
+state_hex.hex_s5 0 0 1 0 0 0 0 1 
+state_hex.hex_s6 0 1 0 0 0 0 0 1 
+state_hex.hex_s7 1 0 0 0 0 0 0 1 

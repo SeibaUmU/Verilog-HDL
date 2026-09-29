@@ -1,0 +1,22 @@
+// ==========================================
+// Module: Mux 4-to-1 dữ liệu 2-bit (Mô hình hành vi)
+// ==========================================
+module mux4_1_2bit_behavioral(LEDR, SW);
+    
+    // Khai báo port theo phong cách giáo trình
+    input [9:0] SW;        // Cần tổng cộng 10 Switch (8 bit data + 2 bit select)
+    output reg [1:0] LEDR; // Ngõ ra 2-bit, bắt buộc dùng 'reg' trong always block
+
+    // Khối always mô tả hành vi của mạch
+    always @(*) begin
+        // Dùng 2 Switch cao nhất SW[9] và SW[8] làm tín hiệu chọn
+        case (SW[9:8]) 
+            2'b00: LEDR = SW[1:0]; // Chọn dữ liệu 0 (nối 2 bit ngõ ra với SW 1 và 0)
+            2'b01: LEDR = SW[3:2]; // Chọn dữ liệu 1 (nối 2 bit ngõ ra với SW 3 và 2)
+            2'b10: LEDR = SW[5:4]; // Chọn dữ liệu 2 (nối 2 bit ngõ ra với SW 5 và 4)
+            2'b11: LEDR = SW[7:6]; // Chọn dữ liệu 3 (nối 2 bit ngõ ra với SW 7 và 6)
+            default: LEDR = 2'b00; // Mặc định ngõ ra bằng 0 để tránh tạo chốt (latch)
+        endcase
+    end
+
+endmodule

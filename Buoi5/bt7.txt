@@ -1,0 +1,57 @@
+module bcd_7seg (
+    input [3:0] bcd,
+    output reg [6:0] HEX
+);
+    always @(*) begin
+        case (bcd)
+            4'd0: HEX = 7'b1000000;
+            4'd1: HEX = 7'b1111001;
+            4'd2: HEX = 7'b0100100;
+            4'd3: HEX = 7'b0110000;
+            4'd4: HEX = 7'b0011001;
+            4'd5: HEX = 7'b0010010;
+            4'd6: HEX = 7'b0000010;
+            4'd7: HEX = 7'b1111000;
+            4'd8: HEX = 7'b0000000;
+            4'd9: HEX = 7'b0010000;
+            default: HEX = 7'b1111111; // Tắt LED
+        endcase
+    end
+endmodule
+
+module bt7 (
+    input clk,          // Clock cạnh lên
+    input rs_n,         // Reset không đồng bộ, tích cực mức thấp
+    output [6:0] hex0,  // LED hàng đơn vị
+    output [6:0] hex1   // LED hàng chục
+);
+    reg [3:0] q;        // Bộ đếm nhị phân 4 bit (0-15)
+    reg [3:0] tens;     // Chứa giá trị hàng chục sau khi tách
+    reg [3:0] units;    // Chứa giá trị hàng đơn vị sau khi tách
+
+    // --- Khối bộ đếm nhị phân 4 bit ---
+    always @(posedge clk or negedge rs_n) begin
+        if (!rs_n)
+            q <= 4'd0;
+        else
+            q <= q + 1'b1; // Tự động quay vòng từ 15 về 0
+    end
+
+    // --- Khối tách số Nhị phân sang BCD (Binary to BCD) ---
+    // Vì q tối đa là 15, nên logic tách khá đơn giản:
+    always @(*) begin
+        if (q >= 4'd10) begin
+            tens  = 4'd1;        // Hàng chục là 1
+            units = q - 4'd10;   // Hàng đơn vị là q trừ đi 10
+        end 
+        else begin
+            tens  = 4'd0;        // Hàng chục là 0
+            units = q;           // Hàng đơn vị chính là q
+        end
+    end
+
+    // --- Gọi module giải mã cho 2 LED ---
+    bcd_7seg u_unit (.bcd(units), .hex(hex0));
+    bcd_7seg u_tens (.bcd(tens),  .hex(hex1));
+
+endmodule

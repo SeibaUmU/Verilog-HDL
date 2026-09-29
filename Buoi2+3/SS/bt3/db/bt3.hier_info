@@ -1,0 +1,75 @@
+|bt3
+LEDR[1] <= LEDR.DB_MAX_OUTPUT_PORT_TYPE
+LEDR[2] <= LEDR.DB_MAX_OUTPUT_PORT_TYPE
+LEDR[3] <= sosanh_1bit:bit0.port1
+SW[1] => SW[1].IN1
+SW[2] => SW[2].IN1
+SW[3] => SW[3].IN1
+SW[4] => SW[4].IN1
+SW[5] => SW[5].IN1
+SW[6] => SW[6].IN1
+SW[7] => SW[7].IN1
+SW[8] => SW[8].IN1
+SW[9] => SW[9].IN1
+
+
+|bt3|sosanh_1bit:bit3
+s <= s.DB_MAX_OUTPUT_PORT_TYPE
+e <= e.DB_MAX_OUTPUT_PORT_TYPE
+i <= i.DB_MAX_OUTPUT_PORT_TYPE
+a => s.IN0
+a => e.IN0
+a => i.IN0
+b => i.IN1
+b => e.IN1
+b => s.IN1
+g => s.IN1
+g => i.IN1
+g => e.IN1
+
+
+|bt3|sosanh_1bit:bit2
+s <= s.DB_MAX_OUTPUT_PORT_TYPE
+e <= e.DB_MAX_OUTPUT_PORT_TYPE
+i <= i.DB_MAX_OUTPUT_PORT_TYPE
+a => s.IN0
+a => e.IN0
+a => i.IN0
+b => i.IN1
+b => e.IN1
+b => s.IN1
+g => s.IN1
+g => i.IN1
+g => e.IN1
+
+
+|bt3|sosanh_1bit:bit1
+s <= s.DB_MAX_OUTPUT_PORT_TYPE
+e <= e.DB_MAX_OUTPUT_PORT_TYPE
+i <= i.DB_MAX_OUTPUT_PORT_TYPE
+a => s.IN0
+a => e.IN0
+a => i.IN0
+b => i.IN1
+b => e.IN1
+b => s.IN1
+g => s.IN1
+g => i.IN1
+g => e.IN1
+
+
+|bt3|sosanh_1bit:bit0
+s <= s.DB_MAX_OUTPUT_PORT_TYPE
+e <= e.DB_MAX_OUTPUT_PORT_TYPE
+i <= i.DB_MAX_OUTPUT_PORT_TYPE
+a => s.IN0
+a => e.IN0
+a => i.IN0
+b => i.IN1
+b => e.IN1
+b => s.IN1
+g => s.IN1
+g => i.IN1
+g => e.IN1
+
+

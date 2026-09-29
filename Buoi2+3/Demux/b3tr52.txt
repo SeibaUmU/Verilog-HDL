@@ -1,0 +1,44 @@
+// ==========================================
+// Module: Demux 1-to-16 (Mô hình hành vi)
+// Enable: Tích cực mức CAO
+// ==========================================
+module demux1_16_behavioral(LEDR, SW);
+
+    // Khai báo theo phong cách giáo trình
+    input [5:0] SW;         // SW[0]: in | SW[4:1]: select | SW[5]: enable
+    output reg [15:0] LEDR; // 16 ngõ ra, bắt buộc dùng kiểu 'reg'
+
+    // Khối always mô tả hành vi
+    always @(*) begin
+        if (SW[5] == 1'b1) begin
+            // Nếu Enable = 1 (Mạch chạy)
+            // Bước 1: Xóa tất cả các ngõ ra về 0 trước để tránh dữ liệu cũ bị giữ lại (latch)
+            LEDR = 16'b0000_0000_0000_0000;
+            
+            // Bước 2: Dựa vào 4 bit Select (SW[4:1]), truyền dữ liệu in (SW[0]) vào đúng LED đó
+            case (SW[4:1])
+                4'b0000: LEDR[0]  = SW[0];
+                4'b0001: LEDR[1]  = SW[0];
+                4'b0010: LEDR[2]  = SW[0];
+                4'b0011: LEDR[3]  = SW[0];
+                4'b0100: LEDR[4]  = SW[0];
+                4'b0101: LEDR[5]  = SW[0];
+                4'b0110: LEDR[6]  = SW[0];
+                4'b0111: LEDR[7]  = SW[0];
+                4'b1000: LEDR[8]  = SW[0];
+                4'b1001: LEDR[9]  = SW[0];
+                4'b1010: LEDR[10] = SW[0];
+                4'b1011: LEDR[11] = SW[0];
+                4'b1100: LEDR[12] = SW[0];
+                4'b1101: LEDR[13] = SW[0];
+                4'b1110: LEDR[14] = SW[0];
+                4'b1111: LEDR[15] = SW[0];
+            endcase
+        end 
+        else begin
+            // Nếu Enable = 0 (Mạch tắt), khóa đường truyền, đưa tất cả LED về 0
+            LEDR = 16'b0000_0000_0000_0000;
+        end
+    end
+
+endmodule

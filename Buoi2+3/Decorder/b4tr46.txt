@@ -1,0 +1,100 @@
+// ==========================================
+// Module chính (4-to-16): Mô hình hành vi
+// Ngõ vào Enable: Tích cực mức CAO 
+// Ngõ ra: Tích cực mức THẤP 
+// ==========================================
+module decoder4_16_board(LEDR, SW);
+
+    // Khai báo theo phong cách giáo trình
+    input [4:0] SW;         // SW[3:0]: Dữ liệu | SW[4]: Enable (Tích cực CAO)
+    output [15:0] LEDR;     // 16 ngõ ra (Tích cực THẤP)
+
+    // Khai báo kiểu 'reg' cho các tín hiệu Enable nội bộ phân luồng
+    reg en0; 
+    reg en1; 
+
+    // -----------------------------------------------------------
+    // MÔ HÌNH HÀNH VI: Phân luồng tín hiệu Enable
+    // -----------------------------------------------------------
+    always @(*) begin
+        // Kiểm tra chân Enable tổng (SW[4] tích cực mức CAO)
+        if (SW[4] == 1'b1) begin
+            // Mạch được chạy, xét bit SW[3] để chọn nửa trên/dưới
+            if (SW[3] == 1'b0) begin
+                en0 = 1'b1; // Bật bộ 3-to-8 nửa dưới
+                en1 = 1'b0; // Tắt bộ 3-to-8 nửa trên
+            end 
+            else begin
+                en0 = 1'b0; // Tắt bộ 3-to-8 nửa dưới
+                en1 = 1'b1; // Bật bộ 3-to-8 nửa trên
+            end
+        end 
+        else begin
+            // Mạch tắt, rút Enable của cả hai bộ về 0
+            en0 = 1'b0;
+            en1 = 1'b0;
+        end
+    end
+
+    // -----------------------------------------------------------
+    // GỌI MODULE CON: Khởi tạo 2 bộ Decoder 3-to-8
+    // -----------------------------------------------------------
+    
+    // Nửa dưới (Ngõ ra từ 0 đến 7)
+    decoder3_8_behavioral dec0 (
+        .y(LEDR[7:0]), 
+        .d(SW[2:0]), 
+        .en(en0)
+    );
+
+    // Nửa trên (Ngõ ra từ 8 đến 15)
+    decoder3_8_behavioral dec1 (
+        .y(LEDR[15:8]), 
+        .d(SW[2:0]), 
+        .en(en1)
+    );
+
+endmodule
+
+
+// ==========================================
+// Module con (3-to-8): MÔ HÌNH HÀNH VI
+// Ngõ vào Enable: Tích cực mức CAO
+// Ngõ ra: Tích cực mức THẤP
+// ==========================================
+module decoder3_8_behavioral(y, d, en);
+    
+    // Khai báo in/out
+    input [2:0] d;      // 3 bit dữ liệu
+    input en;           // Enable tích cực mức CAO
+    
+    // Bắt buộc dùng kiểu 'reg' cho ngõ ra trong mô hình hành vi
+    output reg [7:0] y; 
+
+    // -----------------------------------------------------------
+    // Khối always mô tả hành vi của mạch giải mã
+    // -----------------------------------------------------------
+    always @(*) begin
+        if (en == 1'b1) begin
+            // Nếu mạch được phép chạy (en = 1), tiến hành giải mã
+            // Ngõ ra tích cực mức THẤP nên vị trí được chọn mang giá trị 0
+            case (d)
+                3'b000: y = 8'b1111_1110; // Chọn ngõ 0
+                3'b001: y = 8'b1111_1101; // Chọn ngõ 1
+                3'b010: y = 8'b1111_1011; // Chọn ngõ 2
+                3'b011: y = 8'b1111_0111; // Chọn ngõ 3
+                3'b100: y = 8'b1110_1111; // Chọn ngõ 4
+                3'b101: y = 8'b1101_1111; // Chọn ngõ 5
+                3'b110: y = 8'b1011_1111; // Chọn ngõ 6
+                3'b111: y = 8'b0111_1111; // Chọn ngõ 7
+                default: y = 8'b1111_1111; // Tránh chốt (latch)
+            endcase
+        end 
+        else begin
+            // Nếu mạch bị tắt (en = 0), tất cả ngõ ra đều vô hiệu hóa
+            // Do ngõ ra tích cực mức THẤP, trạng thái "vô hiệu" là toàn số 1
+            y = 8'b1111_1111;
+        end
+    end
+
+endmodule

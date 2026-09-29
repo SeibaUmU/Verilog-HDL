@@ -1,0 +1,41 @@
+module bodem_bcd(ck, rs, bcd1, bcd2); // bcd1 là đơn vị, bcd2 là hàng chục
+    input ck, rs;
+    output reg [3:0] bcd1, bcd2;
+
+    always @(posedge ck) begin
+        if (rs == 1'b1) begin
+            bcd1 <= 4'b0000;
+            bcd2 <= 4'b0000;
+        end 
+        else begin
+            // Kiểm tra nếu đang ở 24 thì xung tiếp theo về 00
+            if (bcd2 == 4'd2 && bcd1 == 4'd4) begin
+                bcd1 <= 4'b0000;
+                bcd2 <= 4'b0000;
+            end 
+            // Nếu hàng đơn vị chạm 9 thì reset đơn vị, tăng hàng chục
+            else if (bcd1 == 4'd9) begin
+                bcd1 <= 4'b0000;
+                bcd2 <= bcd2 + 1'b1;
+            end 
+            // Đếm lên bình thường
+            else begin
+                bcd1 <= bcd1 + 1'b1;
+            end
+        end
+    end
+endmodule
+
+// Module kết nối (Top-level)
+module bt5(
+    input [1:0] SW,
+    output [7:0] LEDR
+);
+    // SW[0] là clock, SW[1] là reset
+    bodem_bcd bcd_inst (
+        .ck(SW[0]), 
+        .rs(SW[1]), 
+        .bcd1(LEDR[3:0]), 
+        .bcd2(LEDR[7:4])
+    );
+endmodule

@@ -1,0 +1,90 @@
+module bai7(
+    input CLOCK_50,
+    input [0:0] SW, 
+    output reg [6:0] HEX2, HEX3, HEX4, HEX5, HEX6, HEX7
+);
+    reg [25:0] q = 0;
+    reg clock_1s = 0;
+    always @(posedge CLOCK_50) 
+		begin
+        if (q == 24999999) 
+			begin
+            q <= 0;
+            clock_1s <= ~clock_1s;
+			end 
+		  else 
+			begin
+            q <= q + 1'b1;
+			end
+		end
+
+    reg [3:0] sec_0, sec_1, min_0, min_1, hou_0, hou_1;
+
+    always @(posedge clock_1s or negedge SW[0]) 
+		begin
+        if (!SW[0]) 
+			begin
+            sec_0 <= 0; sec_1 <= 0;
+            min_0 <= 0; min_1 <= 0;
+            hou_0 <= 0; hou_1 <= 0;
+			end 
+		  else 
+			begin
+            if (sec_0 == 9) 
+					begin
+                sec_0 <= 0;
+                if (sec_1 == 5) 
+						begin
+                    sec_1 <= 0;
+                    if (min_0 == 9) 
+							begin
+                        min_0 <= 0;
+                        if (min_1 == 5) 
+									begin
+                            min_1 <= 0;
+                            if (hou_1 == 2 && hou_0 == 3) 
+										begin
+                                hou_0 <= 0; hou_1 <= 0;
+										end 
+									 else if (hou_0 == 9) 
+										begin
+                                hou_0 <= 0; 
+										  hou_1 <= hou_1 + 1'b1;
+										end 
+									 else hou_0 <= hou_0 + 1'b1;
+									end 
+								else min_1 <= min_1 + 1'b1;
+							end 
+						  else min_0 <= min_0 + 1'b1;
+						end 
+					 else sec_1 <= sec_1 + 1'b1;
+					end 
+				else sec_0 <= sec_0 + 1'b1;
+			end
+		end
+
+    function [6:0] bcd_to_7seg(input [3:0] bcd);
+        case (bcd)
+            4'd0: bcd_to_7seg = 7'b1000000;
+            4'd1: bcd_to_7seg = 7'b1111001;
+            4'd2: bcd_to_7seg = 7'b0100100;
+            4'd3: bcd_to_7seg = 7'b0110000;
+            4'd4: bcd_to_7seg = 7'b0011001;
+            4'd5: bcd_to_7seg = 7'b0010010;
+            4'd6: bcd_to_7seg = 7'b0000010;
+            4'd7: bcd_to_7seg = 7'b1111000;
+            4'd8: bcd_to_7seg = 7'b0000000;
+            4'd9: bcd_to_7seg = 7'b0010000;
+            default: bcd_to_7seg = 7'b1111111;
+        endcase
+    endfunction
+
+    always @(*) begin
+        HEX2 = bcd_to_7seg(sec_0);
+        HEX3 = bcd_to_7seg(sec_1);
+        HEX4 = bcd_to_7seg(min_0);
+        HEX5 = bcd_to_7seg(min_1);
+        HEX6 = bcd_to_7seg(hou_0);
+        HEX7 = bcd_to_7seg(hou_1); 
+    end
+endmodule

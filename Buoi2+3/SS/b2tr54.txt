@@ -1,0 +1,95 @@
+// ==========================================
+// Module chính: Mạch so sánh 3-bit (Ghép từ 3 bộ 1-bit)
+// ==========================================
+module comp3bit_board(LEDR, SW);
+
+    // Khai báo theo phong cách giáo trình
+    input [6:0] SW;     // SW[2:0]: Số A | SW[5:3]: Số B | SW[6]: Enable
+    output [2:0] LEDR;  // LEDR[2]: A>B | LEDR[1]: A=B | LEDR[0]: A<B
+
+    // Các đường dây chứa kết quả của từng tầng so sánh
+    wire g2, e2, l2; // Kết quả tầng MSB (Bit 2)
+    wire g1, e1, l1; // Kết quả tầng giữa (Bit 1)
+    wire g0, e0, l0; // Kết quả tầng LSB (Bit 0)
+
+    // -----------------------------------------------------------
+    // GỌI MODULE CON: Khởi tạo 3 bộ so sánh 1-bit
+    // -----------------------------------------------------------
+    
+    // 1. Tầng MSB (Bit 2): A[2] và B[2]
+    // Chân Enable nhận trực tiếp từ SW[6]
+    comp1bit_behavioral comp_bit2 (
+        .g(g2), .e(e2), .l(l2),
+        .a(SW[2]), .b(SW[5]), .en(SW[6])
+    );
+
+    // 2. Tầng giữa (Bit 1): A[1] và B[1]
+    // Chân Enable nhận từ ngõ ra E (bằng nhau) của tầng MSB
+    comp1bit_behavioral comp_bit1 (
+        .g(g1), .e(e1), .l(l1),
+        .a(SW[1]), .b(SW[4]), .en(e2)
+    );
+
+    // 3. Tầng LSB (Bit 0): A[0] và B[0]
+    // Chân Enable nhận từ ngõ ra E (bằng nhau) của tầng giữa
+    comp1bit_behavioral comp_bit0 (
+        .g(g0), .e(e0), .l(l0),
+        .a(SW[0]), .b(SW[3]), .en(e1)
+    );
+
+    // -----------------------------------------------------------
+    // TỔNG HỢP KẾT QUẢ ĐẦU RA 
+    // Dùng lệnh assign (Luồng dữ liệu) cho nhanh gọn
+    // -----------------------------------------------------------
+    
+    // A > B khi có bất kỳ tầng nào báo lớn hơn (vì các tầng dưới chỉ chạy khi tầng trên bằng nhau)
+    assign LEDR[2] = g2 | g1 | g0;
+
+    // A = B khi tầng cuối cùng (LSB) báo bằng nhau (đồng nghĩa các tầng trên cũng đã bằng nhau)
+    assign LEDR[1] = e0;
+
+    // A < B khi có bất kỳ tầng nào báo nhỏ hơn
+    assign LEDR[0] = l2 | l1 | l0;
+
+endmodule
+
+
+// ==========================================
+// Module con: Mạch so sánh 1-bit (MÔ HÌNH HÀNH VI)
+// Enable: Tích cực mức CAO
+// ==========================================
+module comp1bit_behavioral(g, e, l, a, b, en);
+    
+    // Khai báo in/out
+    input a, b;         // 2 bit cần so sánh
+    input en;           // Enable tích cực mức CAO
+    
+    // Bắt buộc dùng kiểu 'reg' cho ngõ ra trong mô hình hành vi
+    output reg g, e, l; 
+
+    // -----------------------------------------------------------
+    // Khối always mô tả hành vi so sánh bằng if-else
+    // -----------------------------------------------------------
+    always @(*) begin
+        if (en == 1'b1) begin
+            // Mạch được chạy, tiến hành so sánh
+            if (a > b) begin
+                g = 1'b1; e = 1'b0; l = 1'b0;
+            end
+            else if (a < b) begin
+                g = 1'b0; e = 1'b0; l = 1'b1;
+            end
+            else begin
+                // Trường hợp còn lại là a == b
+                g = 1'b0; e = 1'b1; l = 1'b0;
+            end
+        end
+        else begin
+            // Mạch bị tắt (en = 0), ép tất cả ngõ ra về 0
+            g = 1'b0; 
+            e = 1'b0; 
+            l = 1'b0;
+        end
+    end
+
+endmodule

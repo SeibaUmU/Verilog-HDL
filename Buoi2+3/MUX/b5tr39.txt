@@ -1,0 +1,22 @@
+// ==========================================
+// Module: Mux 8-to-1 dữ liệu 2-bit (Mô hình luồng dữ liệu)
+// ==========================================
+module mux8_1_2bit_dataflow(LEDR, SW);
+
+    // Khai báo port theo phong cách giáo trình
+    input [18:0] SW;       // 16 bit data + 3 bit select = 19 Switches
+    output [1:0] LEDR;     // Ngõ ra 2-bit (chỉ dùng kiểu wire mặc định, không dùng reg)
+
+    // Sử dụng từ khóa 'assign' và toán tử điều kiện '?:' đặc trưng của Dataflow Modeling
+    // Cú pháp: assign Ngõ_ra = (Điều_kiện) ? Giá_trị_đúng : Giá_trị_sai;
+    
+    assign LEDR = (SW[18:16] == 3'b000) ? SW[1:0]   :  // Nếu Select = 000, xuất dữ liệu 0
+                  (SW[18:16] == 3'b001) ? SW[3:2]   :  // Nếu Select = 001, xuất dữ liệu 1
+                  (SW[18:16] == 3'b010) ? SW[5:4]   :  // Nếu Select = 010, xuất dữ liệu 2
+                  (SW[18:16] == 3'b011) ? SW[7:6]   :  // Nếu Select = 011, xuất dữ liệu 3
+                  (SW[18:16] == 3'b100) ? SW[9:8]   :  // Nếu Select = 100, xuất dữ liệu 4
+                  (SW[18:16] == 3'b101) ? SW[11:10] :  // Nếu Select = 101, xuất dữ liệu 5
+                  (SW[18:16] == 3'b110) ? SW[13:12] :  // Nếu Select = 110, xuất dữ liệu 6
+                                          SW[15:14] ;  // Trường hợp còn lại (111), xuất dữ liệu 7
+
+endmodule

@@ -1,0 +1,12 @@
+
+State Machine - |bt5|cs
+Name cs.s7 cs.s6 cs.s5 cs.s4 cs.s3 cs.s2 cs.s1 cs.s0 cs.s8 
+cs.s0 0 0 0 0 0 0 0 0 0 
+cs.s1 0 0 0 0 0 0 1 1 0 
+cs.s2 0 0 0 0 0 1 0 1 0 
+cs.s3 0 0 0 0 1 0 0 1 0 
+cs.s4 0 0 0 1 0 0 0 1 0 
+cs.s5 0 0 1 0 0 0 0 1 0 
+cs.s6 0 1 0 0 0 0 0 1 0 
+cs.s7 1 0 0 0 0 0 0 1 0 
+cs.s8 0 0 0 0 0 0 0 1 1 

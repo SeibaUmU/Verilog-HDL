@@ -1,0 +1,26 @@
+|bt1
+SW[0] => ~NO_FANOUT~
+SW[1] => ~NO_FANOUT~
+SW[2] => Selector1.IN2
+SW[2] => Selector2.IN1
+SW[2] => next_state.s4.DATAB
+SW[2] => Selector0.IN1
+SW[2] => next_state.s2.DATAB
+SW[3] => ~NO_FANOUT~
+SW[4] => ~NO_FANOUT~
+SW[5] => ~NO_FANOUT~
+SW[6] => ~NO_FANOUT~
+SW[7] => ~NO_FANOUT~
+SW[8] => ~NO_FANOUT~
+SW[9] => ~NO_FANOUT~
+SW[10] => ~NO_FANOUT~
+SW[11] => current_state~3.DATAIN
+LEDR[0] <= <GND>
+LEDR[1] <= <GND>
+LEDR[2] <= LEDR[2].DB_MAX_OUTPUT_PORT_TYPE
+KEY[0] => ~NO_FANOUT~
+KEY[1] => ~NO_FANOUT~
+KEY[2] => ~NO_FANOUT~
+KEY[3] => current_state~1.DATAIN
+
+

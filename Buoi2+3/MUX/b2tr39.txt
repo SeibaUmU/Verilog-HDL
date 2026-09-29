@@ -1,0 +1,25 @@
+// ==========================================
+// Module: Mux 4-to-1 1-bit (Mô hình hành vi - Dùng SW và LEDR)
+// ==========================================
+module mux4_1_behavioral(LEDR, SW);
+    
+    // Khai báo input/output theo phong cách giáo trình
+    input [5:0] SW;        
+    
+    // Lưu ý cực kỳ quan trọng: Trong mô hình hành vi, ngõ ra bị tác động 
+    // bên trong khối 'always' thì bắt buộc phải được khai báo là kiểu 'reg'
+    output reg [0:0] LEDR; 
+
+    // Khối always sẽ được kích hoạt khi trạng thái của bất kỳ SW nào thay đổi
+    always @(*) begin
+        // Xét giá trị của 2 Switch chọn: SW[5] và SW[4]
+        case (SW[5:4]) 
+            2'b00: LEDR[0] = SW[0];  // Nếu là 00 -> Nối ngõ ra với SW[0]
+            2'b01: LEDR[0] = SW[1];  // Nếu là 01 -> Nối ngõ ra với SW[1]
+            2'b10: LEDR[0] = SW[2];  // Nếu là 10 -> Nối ngõ ra với SW[2]
+            2'b11: LEDR[0] = SW[3];  // Nếu là 11 -> Nối ngõ ra với SW[3]
+            default: LEDR[0] = 1'b0; // Mặc định cho an toàn, tránh sinh chốt (latch)
+        endcase
+    end
+
+endmodule

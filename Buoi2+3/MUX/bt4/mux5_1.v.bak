@@ -1,0 +1,19 @@
+module mux5_1(LEDR, SW);
+input [7:0]SW;
+output [0:0]LEDR;
+wire tmp1,tmp2,tmp3;
+	mux2_1 a1 (SW[0],SW[3],SW[4],tmp1);
+	mux2_1 a2 (SW[0],SW[5],SW[6],tmp2);
+	mux2_1 a3 (SW[1],tmp1,tmp2,tmp3);
+	mux2_1 a4 (SW[2],tmp3,SW[7],LEDR[0]);
+endmodule
+
+module mux2_1(a,b,c,y);
+input a,b,c;
+output y;
+wire not1,tmp1,tmp2;
+	not n (not1,a);
+	and u1 (tmp1,not1,b);
+	and u2 (tmp2,a,c);
+	or u3 (y,tmp1,tmp2);
+endmodule

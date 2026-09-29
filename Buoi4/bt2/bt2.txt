@@ -1,0 +1,56 @@
+module bt2_happy_scroll (
+    input  [10:17] SW,    
+    output reg [7:0] HEX7, HEX6, HEX5, HEX4, HEX3, HEX2, HEX1, HEX0
+);
+    parameter H     = 7'b0001001; 
+    parameter A     = 7'b0001000;
+    parameter P     = 7'b0001100;
+    parameter Y     = 7'b0010001;
+    parameter BLANK = 7'b1111111;
+
+    always @(*) begin
+        case(SW)
+            8'b00000000: begin
+                HEX7 = H;     HEX6 = A;     HEX5 = P;     HEX4 = P;     HEX3 = Y; 
+                HEX2 = BLANK; HEX1 = BLANK; HEX0 = BLANK;
+            end
+            8'b00000001: begin
+                HEX7 = BLANK; HEX6 = H;     HEX5 = A;     HEX4 = P;     HEX3 = P; 
+                HEX2 = Y;     HEX1 = BLANK; HEX0 = BLANK;
+            end
+            8'b00000011: begin
+                HEX7 = BLANK; HEX6 = BLANK; HEX5 = H;     HEX4 = A;     HEX3 = P; 
+                HEX2 = P;     HEX1 = Y;     HEX0 = BLANK;
+            end
+            8'b00000111: begin
+                HEX7 = BLANK; HEX6 = BLANK; HEX5 = BLANK; HEX4 = H;     HEX3 = A; 
+                HEX2 = P;     HEX1 = P;     HEX0 = Y;
+            end
+            8'b00001111: begin
+                HEX7 = Y;     HEX6 = BLANK; HEX5 = BLANK; HEX4 = BLANK; HEX3 = H; 
+                HEX2 = A;     HEX1 = P;     HEX0 = P;
+            end
+            8'b00011111: begin
+                HEX7 = P;     HEX6 = Y;     HEX5 = BLANK; HEX4 = BLANK; HEX3 = BLANK;
+                HEX2 = H;     HEX1 = A;     HEX0 = P;
+            end
+            8'b00111111: begin
+                HEX7 = P;     HEX6 = P;     HEX5 = Y;     HEX4 = BLANK; HEX3 = BLANK;
+                HEX2 = BLANK; HEX1 = H;     HEX0 = A;
+            end
+            8'b01111111: begin
+                HEX7 = A;     HEX6 = P;     HEX5 = P;     HEX4 = Y;     HEX3 = BLANK;
+                HEX2 = BLANK; HEX1 = BLANK; HEX0 = H;
+            end
+            8'b11111111: begin
+                HEX7 = H;     HEX6 = A;     HEX5 = P;     HEX4 = P;     HEX3 = Y; 
+                HEX2 = BLANK; HEX1 = BLANK; HEX0 = BLANK;
+            end
+
+            default: begin
+                HEX7 = BLANK; HEX6 = BLANK; HEX5 = BLANK; HEX4 = BLANK; 
+                HEX3 = BLANK; HEX2 = BLANK; HEX1 = BLANK; HEX0 = BLANK;
+            end
+        endcase
+    end
+endmodule

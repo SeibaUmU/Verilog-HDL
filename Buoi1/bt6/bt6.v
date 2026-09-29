@@ -1,0 +1,17 @@
+module bt6(SW,LEDR);
+input [4:0]SW;
+output reg [1:0]LEDR;
+//assign LEDR[1] = (SW == 5'd2)  | (SW == 5'd3)  | (SW == 5'd5)  | (SW == 5'd7)  |(SW == 5'd11) | (SW == 5'd13) | (SW == 5'd17) | (SW == 5'd19) |(SW == 5'd23) | (SW == 5'd29) | (SW == 5'd31);
+always @(SW)
+begin
+		case (SW)
+            5'd2,  5'd3,  5'd5,  5'd7, 
+            5'd11, 5'd13, 5'd17, 5'd19, 
+            5'd23, 5'd29, 5'd31: 
+                LEDR[1] = 1'b1; 
+            
+            default: 
+                LEDR[1] = 1'b0; 
+        endcase
+end
+endmodule

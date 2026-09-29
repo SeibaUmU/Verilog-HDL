@@ -1,0 +1,47 @@
+module bt2(KEY1, KEY0, SW1, LED1, LED0);
+	input      KEY1;   // CK, canh xuong
+	input      KEY0;   // RS, dong bo, tich cuc cao 
+	input      SW1;    // input S
+	output reg LED1;   // Y1 = 1 001
+	output reg LED0;   // Y2 = 1 110
+
+	// gan 7 trang thai dung 3bit 
+	parameter Start = 3'd0;
+	parameter S0    = 3'd1;
+	parameter S00   = 3'd2;
+	parameter S001  = 3'd3;
+	parameter S1    = 3'd4;
+	parameter S11   = 3'd5;
+	parameter S110  = 3'd6;
+
+	reg [2:0] state; // 3 trang thai state
+
+	always @(negedge KEY1)
+	begin
+		if(KEY0 == 1)       // nhan RS = 1
+			state <= Start;
+		else
+		begin
+			case(state)
+				Start: if(SW1==0) state <= S0;   else state <= S1;
+				S0:    if(SW1==0) state <= S00;  else state <= S1;
+				S00:   if(SW1==0) state <= S00;  else state <= S001;
+				S001:  if(SW1==0) state <= S00;  else state <= S1;
+				S1:    if(SW1==0) state <= S0;   else state <= S11;
+				S11:   if(SW1==0) state <= S110; else state <= S11;
+				S110:  if(SW1==0) state <= S00;  else state <= S1;
+				default: state <= Start;
+			endcase
+		end
+	end
+
+	always @(state) // gan trang thai output led khi dung chuoi 
+	begin
+		case(state)
+			S001: begin LED1=1; LED0=0; end // nhan 001
+			S110: begin LED1=0; LED0=1; end // nhan 110
+			default: begin LED1=0; LED0=0; end
+		endcase
+	end
+
+endmodule

@@ -1,0 +1,24 @@
+module bt2 (
+    input SW[0],          // Xung SW[0] cạnh lên
+    input SW[1],         // Reset không đồng bộ, tích cực mức thấp
+    output reg [4:0] LEDR  // Ngõ ra 5 bit (vì 2^4 < 25 < 2^5)
+);
+
+    // Khối điều khiển hành vi
+    always @(posedge SW[0] or negedge SW[1]) begin
+        if (!SW[1]) begin
+            // Reset không đồng bộ: khi SW[1] = 0, LEDR về 0 ngay lập tức
+            LEDR <= 5'b00000;
+        end 
+        else begin
+            // Kiểm tra điều kiện MOD-25 (đến 24 thì reset về 0)
+            if (LEDR >= 5'd24) begin
+                LEDR <= 5'b00000;
+            end 
+            else begin
+                LEDR <= LEDR + 1'b1;
+            end
+        end
+    end
+
+endmodule

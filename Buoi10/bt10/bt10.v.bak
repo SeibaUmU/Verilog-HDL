@@ -1,0 +1,102 @@
+module bai10 (
+    input CLOCK_50, 
+    input RS,
+    output reg [6:0] HEX7, HEX6, HEX5, HEX4, HEX3, HEX2, HEX1, HEX0,
+    output reg [17:0] LEDR
+);
+
+    integer count_1hz, count_200ms;
+    reg clk_1hz, clk_200ms;
+
+    parameter S_SHOW = 1'b0, S_HIDE = 1'b1;
+    reg state_7seg;
+
+    reg [3:0] state_ledr; 
+
+    always @(posedge CLOCK_50 or posedge RS) 
+		begin
+        if (RS) 
+			begin
+            count_1hz <= 0;
+            count_200ms <= 0;
+            clk_1hz <= 0;
+            clk_200ms <= 0;
+			end 
+		  else 
+			begin
+            if (count_1hz == 24999999) 
+					begin
+                count_1hz <= 0;
+                clk_1hz <= ~clk_1hz;
+					end 
+				else count_1hz <= count_1hz + 1;
+
+            if (count_200ms == 9999999) 
+					begin
+                count_200ms <= 0;
+                clk_200ms <= ~clk_200ms;
+					end 
+				else count_200ms <= count_200ms + 1;
+        end
+		end
+
+    always @(posedge clk_1hz or posedge RS) 
+		begin
+        if (RS) state_7seg <= S_HIDE;
+        else state_7seg <= ~state_7seg;
+		end
+
+    always @(posedge clk_200ms or posedge RS) 
+		begin
+        if (RS) state_ledr <= 0;
+        else if (state_ledr == 8) state_ledr <= 0;
+        else state_ledr <= state_ledr + 1;
+		end
+
+    always @(*) 
+		begin
+        if (RS || state_7seg == S_HIDE) 
+			begin 
+			{	HEX7, 
+				HEX6, 
+				HEX5, 
+				HEX4, 
+				HEX3, 
+				HEX2, 
+				HEX1, 
+				HEX0
+			} = {8{7'b1111111}};
+			end 
+		else 
+			begin
+            HEX7 = 7'b0100001; 
+            HEX6 = 7'b0000110; 
+            HEX5 = 7'b0100100; 
+            HEX4 = 7'b0111111; 
+            HEX3 = 7'b0001110; 
+            HEX2 = 7'b0001100; 
+            HEX1 = 7'b0010000; 
+            HEX0 = 7'b0001000; 
+        end
+    end
+
+    always @(*) 
+		begin
+        if (RS) LEDR = 18'b0;
+        else 
+			begin
+            case (state_ledr)
+                0: LEDR = 18'b100000000000000001;
+                1: LEDR = 18'b010000000000000010; 
+                2: LEDR = 18'b001000000000000100;
+                3: LEDR = 18'b000100000000001000;
+                4: LEDR = 18'b000010000000010000;
+                5: LEDR = 18'b000001000000100000;
+                6: LEDR = 18'b000000100001000000;
+                7: LEDR = 18'b000000010010000000;
+                8: LEDR = 18'b000000001100000000;
+                default: LEDR = 18'b0;
+            endcase
+			end
+		end
+endmodule

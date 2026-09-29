@@ -1,0 +1,37 @@
+module bai1(LEDR, SW);
+    input [11:0] SW;
+    output [6:0] LEDR; 
+    wire [5:0] a, b;
+    wire [5:0] s;
+    wire [5:0] c; 
+
+    assign a = SW[5:0];
+    assign b = SW[11:6];
+
+    // Bo cong dau tien voi ci = 0
+    cong1bit u0(c[0], s[0], a[0], b[0], 1'b0);
+    
+    cong1bit u1(c[1], s[1], a[1], b[1], c[0]);
+    cong1bit u2(c[2], s[2], a[2], b[2], c[1]);
+    cong1bit u3(c[3], s[3], a[3], b[3], c[2]);
+    cong1bit u4(c[4], s[4], a[4], b[4], c[3]);
+    cong1bit u5(c[5], s[5], a[5], b[5], c[4]);
+
+    assign LEDR[5:0] = s;
+    assign LEDR[6] = c[5]; 
+
+endmodule
+
+module cong1bit(co,s,a,b,ci);
+input a,b,ci;
+output co,s;
+wire n1,n2,n3,n4;
+
+xor (n1,a,b);
+xor (s,ci,n1);
+not (n2,n1);
+and (n3,n2,b);
+and (n4,ci,n1);
+or (co,n3,n4);
+
+endmodule

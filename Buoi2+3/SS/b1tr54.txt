@@ -1,0 +1,83 @@
+// ==========================================
+// Module chính: Mạch so sánh 2-bit (Ghép từ 2 bộ 1-bit)
+// ==========================================
+module comp2bit_board(LEDR, SW);
+
+    // Khai báo theo phong cách giáo trình
+    input [4:0] SW;     // SW[1:0]: Số A | SW[3:2]: Số B | SW[4]: Enable tổng (Mức CAO)
+    output [2:0] LEDR;  // LEDR[2]: A>B | LEDR[1]: A=B | LEDR[0]: A<B
+
+    // Các đường dây chứa kết quả của bộ so sánh bit cao (MSB)
+    wire g1, e1, l1; 
+    
+    // Các đường dây chứa kết quả của bộ so sánh bit thấp (LSB)
+    wire g0, e0, l0;
+
+    // -----------------------------------------------------------
+    // GỌI MODULE CON: Khởi tạo 2 bộ so sánh 1-bit
+    // -----------------------------------------------------------
+    
+    // 1. So sánh MSB (Bit 1): A1 và B1
+    // Chân Enable của bộ này nhận trực tiếp từ SW[4]
+    comp1bit_structural comp_msb (
+        .G(g1), .E(e1), .L(l1),
+        .a(SW[1]), .b(SW[3]), .en(SW[4])
+    );
+
+    // 2. So sánh LSB (Bit 0): A0 và B0
+    // LƯU Ý: Chân Enable của bộ này được cấp bằng ngõ ra E (e1) của MSB
+    comp1bit_structural comp_lsb (
+        .G(g0), .E(e0), .L(l0),
+        .a(SW[0]), .b(SW[2]), .en(e1)
+    );
+
+    // -----------------------------------------------------------
+    // TỔNG HỢP KẾT QUẢ (Dùng cổng logic cơ bản để giữ đúng mô hình cấu trúc)
+    // -----------------------------------------------------------
+    // A > B khi: Bit cao lớn hơn (g1) HOẶC (Bit cao bằng nhau VÀ Bit thấp lớn hơn -> chính là g0 vì LSB chỉ chạy khi e1=1)
+    or u_orG (LEDR[2], g1, g0);
+
+    // A = B khi: Bit cao bằng nhau VÀ Bit thấp bằng nhau (chính là e0)
+    buf u_bufE (LEDR[1], e0); // Dùng cổng đệm (buffer) để nối dây thẳng
+
+    // A < B khi: Bit cao nhỏ hơn (l1) HOẶC Bit thấp nhỏ hơn (l0)
+    or u_orL (LEDR[0], l1, l0);
+
+endmodule
+
+
+// ==========================================
+// Module con: Mạch so sánh 1-bit (MÔ HÌNH CẤU TRÚC)
+// Enable: Tích cực mức CAO
+// ==========================================
+module comp1bit_structural(G, E, L, a, b, en);
+    
+    // Khai báo in/out
+    input a, b;         // 2 bit cần so sánh
+    input en;           // Enable tích cực mức CAO
+    output G, E, L;     // Greater (a>b), Equal (a=b), Less (a<b)
+
+    // Các đường dây trung gian
+    wire not_a, not_b, eq_ab;
+
+    // Tạo các tín hiệu đảo
+    not u_notA (not_a, a);
+    not u_notB (not_b, b);
+
+    // -----------------------------------------------------------
+    // MÔ HÌNH CẤU TRÚC: Dùng cổng logic cơ bản
+    // -----------------------------------------------------------
+    
+    // a = b khi cả hai cùng là 0 hoặc cùng là 1 (Dùng cổng XNOR)
+    xnor u_xnor (eq_ab, a, b);
+
+    // G (a > b): Xảy ra khi a=1 VÀ b=0 VÀ mạch được cho phép (en=1)
+    and u_G (G, en, a, not_b);
+
+    // E (a = b): Xảy ra khi a=b VÀ mạch được cho phép (en=1)
+    and u_E (E, en, eq_ab);
+
+    // L (a < b): Xảy ra khi a=0 VÀ b=1 VÀ mạch được cho phép (en=1)
+    and u_L (L, en, not_a, b);
+
+endmodule

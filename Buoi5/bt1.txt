@@ -1,0 +1,48 @@
+module t_flip_flop (
+    input ck,
+    input rs, // Reset tích cực mức thấp
+    input t,
+    output reg q
+);
+    always @(posedge clk or negedge rs) begin
+        if (!rs) 
+            q <= 1'b0;
+        else begin
+            if (t) 
+                q <= ~q;
+            else 
+                q <= q;
+        end
+    end
+endmodule
+
+module bt1 (
+    input [2:0] SW,
+    output [3:0] LEDR
+);
+    // Các dây nối trung gian cho cổng AND
+    wire and1, and2;
+
+    // Tầng 0: T0 = SW[2]
+    t_flip_flop ff0 (.clk(SW[0]), .rs(SW[1]), .t(SW[2]), .q(LEDR[0]));
+
+    // Tầng 1: T1 = q[0] AND SW[2]
+    assign and1 = q[0] & SW[2];
+    t_flip_flop ff1 (.clk(SW[0]), .rs(SW[1]), .t(and1), .q(LEDR[1]));
+
+    // Tầng 2: T2 = q[1] AND and1
+    assign and2 = q[1] & and1;
+    t_flip_flop ff2 (.clk(SW[0]), .rs(SW[1]), .t(and2), .q(LEDR[2]));
+
+    // Tầng 3: T3 = q[2] AND and2
+    t_flip_flop ff3 (.clk(SW[0]), .rs(SW[1]), .t(q[2] & and2), .q(LEDR[3]));
+
+endmodule
+
+/*
+Tính đồng bộ: Tất cả các chân ck của 4 Flip-Flop đều được nối chung vào một nguồn ck. Điều này có nghĩa là tất cả các bit thay đổi trạng thái cùng một lúc.
+Hướng đếm: Tín hiệu $T$ của tầng sau được kích hoạt khi tất cả các tầng trước đó bằng 1 (thông qua cổng AND). Ví dụ: $Q_0=1, Q_1=1, Q_2=1$ thì tầng tiếp theo mới lật trạng thái. Đây là đặc điểm của bộ đếm lên.
+=> Đáp án đúng là Đáp án 2: Đây là bộ đếm lên đồng bộ 4 bit.
+Giải thích: * Đồng bộ: Vì các Flip-Flop nhảy cùng nhịp xung ck.
+Đếm lên: Vì mạch sử dụng ngõ ra $Q$ của tầng trước kết hợp với cổng AND để kích tầng sau (nếu dùng $\bar{Q}$ thì sẽ là đếm xuống).
+*/

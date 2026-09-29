@@ -1,0 +1,61 @@
+module bt3(SW, HEX0);
+input[17:0]SW;
+output [6:0]HEX0;
+wire[2:0]M;
+	mux3bit5to1(SW[17:15],SW[14:12],SW[11:9],SW[8:6],SW[5:3],M);
+	led_7doan(M,HEX0);
+endmodule
+
+module mux3bit5to1(S,A,B,C,D,E,M);
+input [2:0]S,A,B,C,D,E;
+output [2:0]M;
+reg[2:0]M;
+always @(*)
+begin
+
+case(S)
+	3'b000:M=A;
+	3'b001:M=B;
+	3'b010:M=C;
+	3'b011:M=D;
+	3'b100:M=E;
+endcase
+end
+endmodule
+
+module led_7doan(Data,HEX);
+intput [2:0]Data;
+output reg[6:0]HEX4,HEX3,HEX2,HEX1,HEX0;
+parameter H=7'b0001001;
+parameter E=7'b0000110;
+parameter L=7'b1000111;
+parameter O=7'b1000000;
+
+always @(Data)
+begin
+case(Data)
+	3'b000: begin
+		HEX4=H;HEX3=E;HEX2=L;HEX1=L;HEX0=O;
+		end
+	3'b001: begin
+		HEX4=E;HEX3=L;HEX2=L;HEX1=O;HEX0=H;
+		end
+	3'b010: begin
+		HEX4=L;HEX3=L;HEX2=O;HEX1=H;HEX0=E;
+		end
+	3'b011: begin
+		HEX4=L;HEX3=O;HEX2=H;HEX1=E;HEX0=L;
+		end
+	3'b100: begin
+		HEX4=O;HEX3=H;HEX2=E;HEX1=L;HEX0=L;
+		end
+	default: begin
+            HEX4=7'b1111111;
+            HEX3=7'b1111111;
+            HEX2=7'b1111111;
+            HEX1=7'b1111111;
+            HEX0=7'b1111111;
+        end
+    endcase
+end
+endmodule

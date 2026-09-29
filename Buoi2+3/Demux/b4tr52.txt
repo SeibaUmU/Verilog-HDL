@@ -1,0 +1,81 @@
+// ==========================================
+// Module chính: Demux 1-to-16 (Ghép từ 2 bộ Demux 1-8)
+// ==========================================
+module demux1_16_board(LEDR, SW);
+
+    // Khai báo in/out theo phong cách giáo trình
+    input [5:0] SW;         // SW[0]: in | SW[4:1]: select | SW[5]: Enable tổng
+    output [15:0] LEDR;     // 16 ngõ ra
+
+    // Khai báo đường dây Enable cho 2 bộ 1-to-8
+    wire en_lower; 
+    wire en_upper;
+
+    // -----------------------------------------------------------
+    // Tạo tín hiệu phân luồng Enable bằng từ khóa assign
+    // (Kết hợp Enable tổng SW[5] và Bit chọn cao nhất SW[4])
+    // -----------------------------------------------------------
+    assign en_lower = SW[5] & ~SW[4]; // Bật nửa dưới khi SW[5]=1 và SW[4]=0
+    assign en_upper = SW[5] &  SW[4]; // Bật nửa trên khi SW[5]=1 và SW[4]=1
+
+    // -----------------------------------------------------------
+    // GỌI MODULE CON: Khởi tạo 2 bộ Demux 1-to-8
+    // -----------------------------------------------------------
+    
+    // Bộ 1: Nửa dưới (Ngõ ra từ 0 đến 7)
+    demux1_8_behavioral demux_low (
+        .y(LEDR[7:0]),   // Nối vào 8 LED thấp
+        .in(SW[0]),      // Dữ liệu ngõ vào dùng chung
+        .sel(SW[3:1]),   // 3 bit chọn thấp dùng chung
+        .en(en_lower)    // Tín hiệu Enable nửa dưới
+    );
+
+    // Bộ 2: Nửa trên (Ngõ ra từ 8 đến 15)
+    demux1_8_behavioral demux_high (
+        .y(LEDR[15:8]),  // Nối vào 8 LED cao
+        .in(SW[0]),      // Dữ liệu ngõ vào dùng chung
+        .sel(SW[3:1]),   // 3 bit chọn thấp dùng chung
+        .en(en_upper)    // Tín hiệu Enable nửa trên
+    );
+
+endmodule
+
+
+// ==========================================
+// Module con: Demux 1-to-8 (MÔ HÌNH HÀNH VI)
+// Enable: Tích cực mức CAO
+// ==========================================
+module demux1_8_behavioral(y, in, sel, en);
+    
+    // Khai báo in/out
+    input in;           // 1 bit dữ liệu đầu vào
+    input [2:0] sel;    // 3 bit chân chọn (Select)
+    input en;           // Enable tích cực mức CAO
+    
+    // Bắt buộc dùng kiểu 'reg' cho ngõ ra trong mô hình hành vi
+    output reg [7:0] y; 
+
+    // -----------------------------------------------------------
+    // Khối always mô tả hành vi của mạch Demultiplexer 1-to-8
+    // -----------------------------------------------------------
+    always @(*) begin
+        // Mặc định ép tất cả ngõ ra về 0 để tránh chốt (latch)
+        y = 8'b0000_0000; 
+
+        if (en == 1'b1) begin
+            // Nếu mạch chạy (en = 1), phân phối dữ liệu 'in' tới vị trí 'sel'
+            case (sel)
+                3'b000: y[0] = in; // Truyền in ra y[0]
+                3'b001: y[1] = in; // Truyền in ra y[1]
+                3'b010: y[2] = in; // Truyền in ra y[2]
+                3'b011: y[3] = in; // Truyền in ra y[3]
+                3'b100: y[4] = in; // Truyền in ra y[4]
+                3'b101: y[5] = in; // Truyền in ra y[5]
+                3'b110: y[6] = in; // Truyền in ra y[6]
+                3'b111: y[7] = in; // Truyền in ra y[7]
+            endcase
+        end 
+        // Không cần khối else vì lệnh y = 8'b0 ở trên đã xử lý trường hợp en = 0
+    end
+
+endmodule

@@ -1,0 +1,36 @@
+// ==========================================
+// Module: Mạch so sánh 6-bit (MÔ HÌNH HÀNH VI)
+// So sánh trực tiếp vector 6-bit bằng khối always
+// ==========================================
+module comp6bit_behavioral_board(LEDR, SW);
+
+    // Khai báo theo phong cách giáo trình
+    input [11:0] SW;        // SW[5:0]: Số A (6 bit) | SW[11:6]: Số B (6 bit)
+    
+    // Bắt buộc dùng kiểu 'reg' cho ngõ ra khi bị tác động trong khối always
+    output reg [2:0] LEDR;  
+
+    // -----------------------------------------------------------
+    // Khối always mô tả hành vi so sánh bằng if-else
+    // Mọi thay đổi ở SW đều kích hoạt khối này chạy lại
+    // -----------------------------------------------------------
+    always @(*) begin
+        
+        // Xét trường hợp A lớn hơn B
+        if (SW[5:0] > SW[11:6]) begin
+            LEDR = 3'b100; // Bật LED 2, tắt LED 1 và 0
+        end
+        
+        // Xét trường hợp A nhỏ hơn B
+        else if (SW[5:0] < SW[11:6]) begin
+            LEDR = 3'b001; // Bật LED 0, tắt LED 2 và 1
+        end
+        
+        // Trường hợp còn lại chắc chắn là A bằng B
+        else begin
+            LEDR = 3'b010; // Bật LED 1, tắt LED 2 và 0
+        end
+        
+    end
+
+endmodule

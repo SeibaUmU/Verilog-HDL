@@ -1,0 +1,26 @@
+// ==========================================
+// Module: Mạch so sánh 5-bit (MÔ HÌNH LUỒNG DỮ LIỆU)
+// So sánh trực tiếp vector 5-bit
+// ==========================================
+module comp5bit_dataflow_board(LEDR, SW);
+
+    // Khai báo theo phong cách giáo trình
+    input [9:0] SW;     // SW[4:0]: Số A (5 bit) | SW[9:5]: Số B (5 bit)
+    output [2:0] LEDR;  // 3 LED ngõ ra
+
+    // -----------------------------------------------------------
+    // SỬ DỤNG TOÁN TỬ QUAN HỆ TRONG LUỒNG DỮ LIỆU
+    // Trình tổng hợp Quartus sẽ tự động dịch các dấu >, ==, < 
+    // thành các mạch so sánh 5-bit tối ưu nhất dưới phần cứng.
+    // -----------------------------------------------------------
+    
+    // A > B: So sánh nguyên cụm 5 bit SW[4:0] với SW[9:5]
+    assign LEDR[2] = (SW[4:0] > SW[9:5]);
+
+    // A = B: Dùng toán tử so sánh bằng (==)
+    assign LEDR[1] = (SW[4:0] == SW[9:5]);
+
+    // A < B: Dùng toán tử nhỏ hơn (<)
+    assign LEDR[0] = (SW[4:0] < SW[9:5]);
+
+endmodule

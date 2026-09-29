@@ -1,0 +1,28 @@
+module bt3(LEDR, SW);
+    input [9:1] SW;    
+    output [3:1] LEDR;  
+
+
+module sosanh_1bit(g, e, i, a, b, en);
+    
+    // Khai báo in/out
+    input a, b;         // 2 bit cần so sánh
+    input en;           // Enable tích cực mức CAO
+    output g, e, l;     // Ngõ ra kiểu wire mặc định cho Dataflow
+
+    // -----------------------------------------------------------
+    // Lệnh assign mô tả dòng chảy dữ liệu bằng biểu thức Boolean
+    // Mọi kết quả đều phải AND ( & ) với tín hiệu Enable (en).
+    // Nếu en = 0, toàn bộ biểu thức bị kéo về 0.
+    // -----------------------------------------------------------
+    
+    // Greater (a > b): a phải bằng 1 và b phải bằng 0 (~b)
+    assign g = en & (a & ~b);
+
+    // Equal (a == b): Dùng phép toán so sánh bằng (==) hoặc cổng XNOR (~(a^b))
+    assign e = en & (a == b);
+
+    // Less (a < b): a phải bằng 0 (~a) và b phải bằng 1
+    assign l = en & (~a & b);
+
+endmodule

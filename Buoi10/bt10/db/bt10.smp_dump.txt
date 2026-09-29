@@ -1,0 +1,19 @@
+
+State Machine - |bt10|ledcs
+Name ledcs.s7 ledcs.s6 ledcs.s5 ledcs.s4 ledcs.s3 ledcs.s2 ledcs.s1 ledcs.s0 ledcs.s8 
+ledcs.s0 0 0 0 0 0 0 0 0 0 
+ledcs.s1 0 0 0 0 0 0 1 1 0 
+ledcs.s2 0 0 0 0 0 1 0 1 0 
+ledcs.s3 0 0 0 0 1 0 0 1 0 
+ledcs.s4 0 0 0 1 0 0 0 1 0 
+ledcs.s5 0 0 1 0 0 0 0 1 0 
+ledcs.s6 0 1 0 0 0 0 0 1 0 
+ledcs.s7 1 0 0 0 0 0 0 1 0 
+ledcs.s8 0 0 0 0 0 0 0 1 1 
+
+State Machine - |bt10|hexcs
+Name hexcs.t3 hexcs.t2 hexcs.t1 hexcs.t0 
+hexcs.t0 0 0 0 0 
+hexcs.t1 0 0 1 1 
+hexcs.t2 0 1 0 1 
+hexcs.t3 1 0 0 1 

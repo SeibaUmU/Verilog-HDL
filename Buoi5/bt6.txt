@@ -1,0 +1,59 @@
+module bcd_7seg (
+    input [3:0] bcd,
+    output reg [6:0] HEX
+);
+    always @(*) begin
+        case (bcd)
+            4'd0: HEX = 7'b1000000;
+            4'd1: HEX = 7'b1111001;
+            4'd2: HEX = 7'b0100100;
+            4'd3: HEX = 7'b0110000;
+            4'd4: HEX = 7'b0011001;
+            4'd5: HEX = 7'b0010010;
+            4'd6: HEX = 7'b0000010;
+            4'd7: HEX = 7'b1111000;
+            4'd8: HEX = 7'b0000000;
+            4'd9: HEX = 7'b0010000;
+            default: HEX = 7'b1111111; // Tắt LED
+        endcase
+    end
+endmodule
+
+module bt6 (
+    input clk,      // Clock cạnh lên
+    input rs,       // Reset đồng bộ, tích cực mức cao
+    output [6:0] HEX0, // LED hàng đơn vị
+    output [6:0] HEX1  // LED hàng chục
+);
+    reg [3:0] tens;  // Hàng chục
+    reg [3:0] units; // Hàng đơn vị
+
+    always @(posedge clk) begin
+        if (rs) begin
+            // Reset đồng bộ về giá trị 15
+            tens  <= 4'd1;
+            units <= 4'd5;
+        end 
+        else begin
+            if (tens == 4'd0 && units == 4'd0) begin
+                // Nếu đang ở 00, quay lại 15
+                tens  <= 4'd1;
+                units <= 4'd5;
+            end 
+            else if (units == 4'd0) begin
+                // Nếu đơn vị là 0 nhưng hàng chục > 0
+                units <= 4'd9;
+                tens  <= tens - 1'b1;
+            end 
+            else begin
+                // Đếm xuống bình thường
+                units <= units - 1'b1;
+            end
+        end
+    end
+
+    // Gọi module giải mã cho 2 LED
+    bcd_7seg u_unit (.bcd(units), .HEX(HEX0));
+    bcd_7seg u_tens (.bcd(tens),  .HEX(HEX1));
+
+endmodule

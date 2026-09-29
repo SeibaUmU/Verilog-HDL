@@ -1,0 +1,19 @@
+// ==========================================
+// Module: Decoder 4-to-16 (Mô hình hành vi)
+// Enable tích cực mức CAO, Ngõ ra tích cực mức THẤP
+// ==========================================
+module decoder4_16_behavioral(LEDR, SW);
+
+    // Khai báo theo phong cách giáo trình
+    input [4:0] SW;         // SW[3:0]: 4 bit dữ liệu | SW[4]: Chân Enable (EN)
+    output reg [15:0] LEDR; // 16 bit ngõ ra (bắt buộc dùng 'reg' trong khối always)
+
+    always @(*) begin
+        if (SW[4] == 1'b1)
+            // Dịch bit 0 sang trái theo giá trị của SW[3:0], sau đó đảo ngược lại bằng dấu ~
+            LEDR = ~(16'b1 << SW[3:0]); 
+        else
+            LEDR = 16'hFFFF; // 16'hFFFF tương đương 16'b1111_1111_1111_1111
+    end
+
+endmodule

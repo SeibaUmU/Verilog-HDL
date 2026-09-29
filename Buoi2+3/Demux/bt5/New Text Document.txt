@@ -1,0 +1,28 @@
+module bt2(LEDR, SW);
+    input [4:0] SW;
+    output [16:1] LEDR;
+
+    wire notS3;
+
+    not(notS3, SW[3]);
+
+    demux1_8 u1(LEDR[8:1],   SW[4],  SW[3:1], SW[0]);
+    demux1_8 u2(LEDR[16:9],  notS3,  SW[3:1], SW[0]);
+
+endmodule
+module demux1_8(Y, E, S, D);
+    input [2:0] S;
+    input D;
+    input E;
+    output [8:1] Y;
+
+    assign Y[1] = ~S[2]&~S[1]&~S[0]&D&~E;
+    assign Y[2] = ~S[2]&~S[1]& S[0]&D&~E;
+    assign Y[3] = ~S[2]& S[1]&~S[0]&D&~E;
+    assign Y[4] = ~S[2]& S[1]& S[0]&D&~E;
+    assign Y[5] =  S[2]&~S[1]&~S[0]&D&~E;
+    assign Y[6] =  S[2]&~S[1]& S[0]&D&~E;
+    assign Y[7] =  S[2]& S[1]&~S[0]&D&~E;
+    assign Y[8] =  S[2]& S[1]& S[0]&D&~E;
+
+endmodule

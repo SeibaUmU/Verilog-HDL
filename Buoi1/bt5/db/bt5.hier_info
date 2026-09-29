@@ -1,0 +1,17 @@
+|bt5
+SW[0] => WideAnd0.IN0
+SW[0] => WideAnd1.IN0
+SW[0] => WideAnd2.IN0
+SW[1] => WideAnd0.IN1
+SW[1] => WideAnd2.IN1
+SW[1] => WideAnd1.IN1
+SW[2] => WideAnd2.IN2
+SW[2] => WideAnd0.IN2
+SW[2] => WideAnd1.IN2
+SW[3] => WideAnd1.IN3
+SW[3] => WideAnd2.IN3
+SW[3] => WideAnd0.IN3
+LEDR[0] <= <GND>
+LEDR[1] <= WideOr0.DB_MAX_OUTPUT_PORT_TYPE
+
+

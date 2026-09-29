@@ -1,0 +1,31 @@
+module bai6(
+    input [1:0] KEY, 
+    output reg [7:0] LEDR
+);
+    always @(negedge KEY[0] or negedge KEY[1])
+    begin
+        if (!KEY[1]) 
+				begin
+					LEDR[3:0] <= 4'd7;  
+					LEDR[7:4] <= 4'd1;
+				end
+		  else
+				begin
+					if (LEDR[3:0] == 4'd0)
+						begin
+							if (LEDR[7:4] == 4'd0)
+								begin
+									LEDR[7:4] <= 4'd1;
+									LEDR[3:0] <= 4'd7;
+								end
+							else
+								begin
+									LEDR[7:4] <= LEDR[7:4] - 1'b1;
+									LEDR[3:0] <= 4'd9;
+								end
+						end
+					else
+						LEDR[3:0] <= LEDR[3:0] - 1'b1;
+				end
+    end
+endmodule

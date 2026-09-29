@@ -1,0 +1,10 @@
+
+State Machine - |bt2|state
+Name state.S110 state.S11 state.S1 state.S001 state.S00 state.S0 state.Start 
+state.Start 0 0 0 0 0 0 0 
+state.S0 0 0 0 0 0 1 1 
+state.S00 0 0 0 0 1 0 1 
+state.S001 0 0 0 1 0 0 1 
+state.S1 0 0 1 0 0 0 1 
+state.S11 0 1 0 0 0 0 1 
+state.S110 1 0 0 0 0 0 1 

@@ -1,0 +1,28 @@
+module bt7(
+	input [1:0] SW,
+	output reg [3:0] bcd1,
+	output reg [3:0] bcd2
+);
+always @(posedge SW[0])
+begin
+	if(SW[1]==1'b1)
+	begin
+		bcd1<=4'd0;
+		bcd2<=4'd0;
+	end
+	else
+		begin
+			if(bcd1==4'd9)
+				begin
+					bcd1<=4'd0;
+					if (bcd2 == 4'd1 && bcd1 == 4'd8)
+					begin
+						bcd1<=4'd0;
+						bcd2<=4'd0;
+					end
+				end
+			else
+				bcd1 <= bcd1 + 1'b1;
+		end
+end
+endmodule

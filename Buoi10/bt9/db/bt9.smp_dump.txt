@@ -1,0 +1,19 @@
+
+State Machine - |bt9|state_ledr
+Name state_ledr.ledr_s3 state_ledr.ledr_s2 state_ledr.ledr_s1 state_ledr.ledr_s0 
+state_ledr.ledr_s0 0 0 0 0 
+state_ledr.ledr_s1 0 0 1 1 
+state_ledr.ledr_s2 0 1 0 1 
+state_ledr.ledr_s3 1 0 0 1 
+
+State Machine - |bt9|state_ledg
+Name state_ledg.ledg_s0 state_ledg.ledg_s2 state_ledg.ledg_s1 
+state_ledg.ledg_s0 0 0 0 
+state_ledg.ledg_s1 1 0 1 
+state_ledg.ledg_s2 1 1 0 
+
+State Machine - |bt9|state_hex
+Name state_hex.hex_s0 state_hex.hex_s2 state_hex.hex_s1 
+state_hex.hex_s0 0 0 0 
+state_hex.hex_s1 1 0 1 
+state_hex.hex_s2 1 1 0 

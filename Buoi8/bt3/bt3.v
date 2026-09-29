@@ -1,0 +1,88 @@
+module bt3(
+    input [11:0] SW,        
+    output [6:0] HEX0, HEX1,
+    output [6:0] HEX4, HEX5, HEX6, HEX7 
+);
+    wire [5:0] prod_AB; 
+    wire [5:0] prod_CD; 
+    wire [6:0] P;       
+
+    // 1. Module nhan A (SW[2:0]) va B (SW[5:3])
+    bai8 multiplier1 (
+        .SW(SW[5:0]), 
+        .LEDR(prod_AB)
+    );
+
+    // 2. Module nhan C (SW[8:6]) va D (SW[11:9])
+    bai8 multiplier2 (
+        .SW(SW[11:6]), 
+        .LEDR(prod_CD)
+    );
+
+    // 3. Module cong (A*B) + (C*D)
+    bai1 adder (
+        .SW({prod_CD, prod_AB}), 
+        .LEDR(P)
+    );
+
+    // 4. HIEN THI INPUT (A, B, C, D)
+   
+    hex_to_7seg dec_A ({1'b0, SW[2:0]}, HEX4);
+    hex_to_7seg dec_B ({1'b0, SW[5:3]}, HEX5);
+    hex_to_7seg dec_C ({1'b0, SW[8:6]}, HEX6);
+    hex_to_7seg dec_D ({1'b0, SW[11:9]}, HEX7);
+
+    // 5. HIEN THI KET QUA P (HEX1, HEX0)
+    hex_to_7seg hex0_decoder (P[3:0], HEX0);
+    hex_to_7seg hex1_decoder ({1'b0, P[6:4]}, HEX1);
+
+endmodule
+
+
+
+module bai8(input [5:0] SW, output [5:0] LEDR);
+    wire [2:0] s;
+    wire n1, n2, n3, m1, m2, cout; 
+    assign LEDR[0] = SW[0] & SW[3];
+    cong1bit_logic u0(n1, LEDR[1], SW[0] & SW[4], SW[1] & SW[3], 1'b0);
+    cong1bit_logic u1(n2, s[0], SW[2] & SW[3], SW[1] & SW[4], n1);
+    cong1bit_logic u2(n3, s[1], SW[2] & SW[4], 1'b0, n2);
+    cong1bit_logic u3(m1, LEDR[2], s[0], SW[5] & SW[0], 1'b0);
+    cong1bit_logic u4(m2, LEDR[3], s[1], SW[5] & SW[1], m1);
+    cong1bit_logic u5(cout, LEDR[4], n3, SW[5] & SW[2], m2);
+    assign LEDR[5] = cout; 
+endmodule
+
+module bai1(output [6:0] LEDR, input [11:0] SW);
+    wire [5:0] a, b, s, c; 
+    assign a = SW[5:0]; assign b = SW[11:6];
+    cong1bit_logic u0(c[0], s[0], a[0], b[0], 1'b0);
+    cong1bit_logic u1(c[1], s[1], a[1], b[1], c[0]);
+    cong1bit_logic u2(c[2], s[2], a[2], b[2], c[1]);
+    cong1bit_logic u3(c[3], s[3], a[3], b[3], c[2]);
+    cong1bit_logic u4(c[4], s[4], a[4], b[4], c[3]);
+    cong1bit_logic u5(c[5], s[5], a[5], b[5], c[4]);
+    assign LEDR[5:0] = s; assign LEDR[6] = c[5]; 
+endmodule
+
+module cong1bit_logic(output co, output s, input a, input b, input ci);
+    wire n1, n3, n4;
+    xor(n1, a, b); xor(s, ci, n1);
+    and(n3, a, b); and(n4, ci, n1); or(co, n3, n4);
+endmodule
+
+module hex_to_7seg(input [3:0] hex, output reg [6:0] seg);
+    always @(*) begin
+        case(hex)
+            4'h0: seg = 7'b1000000; 4'h1: seg = 7'b1111001;
+            4'h2: seg = 7'b0100100; 4'h3: seg = 7'b0110000;
+            4'h4: seg = 7'b0011001; 4'h5: seg = 7'b0010010;
+            4'h6: seg = 7'b0000010; 4'h7: seg = 7'b1111000;
+            4'h8: seg = 7'b0000000; 4'h9: seg = 7'b0010000;
+            4'hA: seg = 7'b0001000; 4'hB: seg = 7'b0000011;
+            4'hC: seg = 7'b1000110; 4'hD: seg = 7'b0100001;
+            4'hE: seg = 7'b0000110; 4'hF: seg = 7'b0001110;
+            default: seg = 7'b1111111;
+        endcase
+    end
+endmodule

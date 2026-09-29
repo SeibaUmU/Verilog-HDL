@@ -1,0 +1,86 @@
+// ==========================================
+// Module chính (4-to-16): Kết hợp Hành vi & Khởi tạo Cấu trúc
+// ==========================================
+module decoder4_16_board(LEDR, SW);
+
+    // Khai báo theo phong cách giáo trình
+    input [4:0] SW;         // SW[3:0]: Dữ liệu | SW[4]: Enable (Tích cực THẤP)
+    output [15:0] LEDR;     // 16 ngõ ra (Tích cực THẤP)
+
+    // Khai báo kiểu 'reg' cho các tín hiệu được gán trong khối always
+    reg en0_n; 
+    reg en1_n; 
+
+    // -----------------------------------------------------------
+    // 1. MÔ HÌNH HÀNH VI: Xử lý tín hiệu Enable điều khiển
+    // -----------------------------------------------------------
+    always @(*) begin
+        // Kiểm tra chân Enable tổng (SW[4] tích cực mức THẤP)
+        if (SW[4] == 1'b0) begin
+            // Nếu mạch được phép chạy, xét tiếp SW[3] để chọn bộ 3-to-8
+            if (SW[3] == 1'b0) begin
+                en0_n = 1'b0; // Bật bộ 0-7 (Tích cực THẤP)
+                en1_n = 1'b1; // Tắt bộ 8-15
+            end 
+            else begin
+                en0_n = 1'b1; // Tắt bộ 0-7
+                en1_n = 1'b0; // Bật bộ 8-15
+            end
+        end 
+        else begin
+            // Nếu SW[4] = 1 (Mạch tắt), vô hiệu hóa cả hai bộ
+            en0_n = 1'b1;
+            en1_n = 1'b1;
+        end
+    end
+
+    // -----------------------------------------------------------
+    // 2. KHỞI TẠO MODULE: Gọi 2 bộ Decoder 3-to-8
+    // -----------------------------------------------------------
+    
+    // Nửa dưới (Ngõ ra từ 0 đến 7)
+    decoder3_8_structural dec0 (
+        .y(LEDR[7:0]), 
+        .d(SW[2:0]), 
+        .en_n(en0_n)   // Nhận tín hiệu từ khối always phía trên
+    );
+
+    // Nửa trên (Ngõ ra từ 8 đến 15)
+    decoder3_8_structural dec1 (
+        .y(LEDR[15:8]), 
+        .d(SW[2:0]), 
+        .en_n(en1_n)   // Nhận tín hiệu từ khối always phía trên
+    );
+
+endmodule
+
+// ==========================================
+// Module con: Decoder 3-to-8 (MÔ HÌNH CẤU TRÚC)
+// ==========================================
+module decoder3_8_structural(y, d, en_n);
+    
+    // Khai báo in/out
+    input [2:0] d;      // 3 bit dữ liệu
+    input en_n;         // Enable tích cực mức THẤP
+    output [7:0] y;     // 8 bit ngõ ra tích cực mức THẤP
+
+    // Các đường dây chứa tín hiệu đảo
+    wire nd0, nd1, nd2, en;
+
+    // Dùng cổng logic cơ bản (Gate-level Primitives)
+    not u_en (en, en_n);     // Đảo lại enable để đưa vào cổng NAND
+    not u_d0 (nd0, d[0]);
+    not u_d1 (nd1, d[1]);
+    not u_d2 (nd2, d[2]);
+
+    // Sử dụng cổng NAND để ngõ ra tích cực mức THẤP (0 là chọn, 1 là không chọn)
+    nand n0 (y[0], en, nd2, nd1, nd0); 
+    nand n1 (y[1], en, nd2, nd1, d[0]); 
+    nand n2 (y[2], en, nd2, d[1], nd0); 
+    nand n3 (y[3], en, nd2, d[1], d[0]); 
+    nand n4 (y[4], en, d[2], nd1, nd0); 
+    nand n5 (y[5], en, d[2], nd1, d[0]); 
+    nand n6 (y[6], en, d[2], d[1], nd0); 
+    nand n7 (y[7], en, d[2], d[1], d[0]); 
+
+endmodule
