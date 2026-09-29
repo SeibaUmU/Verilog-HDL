@@ -1,2 +1,2 @@
 # Verilog-HDL
-Programming Verilog HDL with Altera DE2
+School Subject's Labs: Programming Verilog HDL with Altera DE2
